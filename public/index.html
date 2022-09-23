@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <title>AnxietyGame</title>
+
+  <script
+          src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js">
+
+  </script>
+
+  <script src="src/lib/bessel.js"></script>
+
+
+</head>
+<body style="background-color:#000000">
+
+
+<!--     Add bundles related to firebase-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://browser.sentry-cdn.com/4.4.1/bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/5.8.6/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.8.6/firebase-auth.js"></script>
+
+<!-- Required libraries for headphone check: JQuery and JQuery-UI -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+
+
+<script>
+  // Import the functions you need from the SDKs you need
+  //import { initializeApp } from "/node_module/firebase/app";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDG0fz_RR8GwoAZIsh53NJf9Fzh8qJYdf0",
+    authDomain: "anxiety-game.firebaseapp.com",
+    projectId: "anxiety-game",
+    storageBucket: "anxiety-game.appspot.com",
+    messagingSenderId: "444580884741",
+    appId: "1:444580884741:web:d248d9d9a293db44fa076c"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+</script>
+
+<script type="module" src="src/main.js" id="main"></script>
+<div class="form" id="mainSection">
+  <header class="form__header" style="background-color: azure;color: darkblue;text-align: center" id="header"><h2 id="header_title" class="form__title"></h2></header>
+  <section class="mainInstructions" style="background-color: aliceblue" id="consent"></section>
+</div>
+
+</body>
+</html>
+
+
