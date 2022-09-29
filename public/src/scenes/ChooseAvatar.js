@@ -9,8 +9,8 @@ export default class ChooseAvatar extends Phaser.Scene {
     init(data){
         this.reload = data.reload;  //to control if preload (loading) is run or not, we don't need it if we come back from StartingInstruct
 
-        this.scale.setGameSize(640,640)  //set game screen size
-        this.scale.updateBounds();
+        // this.scale.setGameSize(640,640)  //set game screen size
+        // this.scale.updateBounds();
     }
 
     constructor() {
@@ -36,6 +36,8 @@ export default class ChooseAvatar extends Phaser.Scene {
         const height = this.scale.height
 
 
+
+
         this.add.text(width * 0.5, height * 0.3, 'Please Choose Your Avatar', {
             fontSize: 35
         })
@@ -43,13 +45,13 @@ export default class ChooseAvatar extends Phaser.Scene {
 
         // Go to Menu or Start Training when the avatar is clicked on, also send the name of file that contains chosen avatar to the next scene
 
-        const female = this.add.sprite( 200, 420, 'femaleCharacter')
+        const female = this.add.sprite( width/2 - 100, height/2 + 100, 'femaleCharacter')
             .setInteractive().setScale(0.38)
             .on('pointerdown', () => this.scene.start('Menu', { playerImageKey: 'Female_char.png' }));
         female.setFrame(0)
 
 
-        const Boy = this.add.sprite( 400, 400, 'Check')
+        const Boy = this.add.sprite( width/2 + 100, height/2 + 80, 'Check')
             .setInteractive().setScale(0.4)
             .on('pointerdown', () => this.scene.start('StartingInstruct', { playerImageKey: 'Check.png' }));
         Boy.setFrame(0)

@@ -4,6 +4,7 @@ export default class MenuScene extends Phaser.Scene {
 
     init(data) {
         this.playerImage = data.playerImageKey
+        // this.scale.updateBounds();
     }
 
     constructor() {
@@ -14,7 +15,7 @@ export default class MenuScene extends Phaser.Scene {
         const width = this.scale.width
         const height = this.scale.height
 
-        console.log(width,height)
+
 
         this.add.text(width * 0.5, height * 0.2, 'MENU', {
             fontSize: 40,
@@ -30,7 +31,7 @@ export default class MenuScene extends Phaser.Scene {
             .setOrigin(0.5);
 
         const StartInstruction= this.add.text(width * 0.5, height * 0.7, 'Go To Instructions and Tutorial', { fontSize:25,fill: '#F38BE3' });
-        StartInstruction.setInteractive().on('pointerdown', () => this.scene.start('TrainingTaskDesign',{ playerImageKey: this.playerImage}))
+        StartInstruction.setInteractive().on('pointerdown', () => this.scene.start('StartingInstruct',{ playerImageKey: this.playerImage}))
             .on('pointerover', () => this.ButtonHoverState(StartInstruction) )
             .on('pointerout', () => this.ButtonRestState(StartInstruction))
             .setOrigin(0.5);

@@ -14,7 +14,7 @@ export default class SecondPracticeInstructions extends Phaser.Scene {
 
     preload() {
 
-        this.load.image('Slide7','assets/Resize7.png')
+        this.load.image('Slide8','assets/Resize8.png')
 
     }
 
@@ -23,7 +23,7 @@ export default class SecondPracticeInstructions extends Phaser.Scene {
 
         const sc_widt = this.scale.width / 2
         const sc_high = this.scale.height / 2
-        var Instruct1 = this.add.image(sc_widt,sc_high,'Slide7')
+        var Instruct1 = this.add.image(sc_widt,sc_high,'Slide8')
 
 
         const NextButton= this.add.text(900, 575, 'Next', { fill: '#0f0' });
@@ -34,7 +34,7 @@ export default class SecondPracticeInstructions extends Phaser.Scene {
 
         const BackButton= this.add.text(75, 575, 'Back', { fill: '#0f0' });
         BackButton.setScale(1.5)
-        BackButton.setInteractive().on('pointerdown', () => this.scene.start('StartingInstruct',{ playerImageKey: this.playerImage}))
+        BackButton.setInteractive().on('pointerdown', () => this.scene.start('FirstInstruct',{ playerImageKey: this.playerImage}))
             .on('pointerover', () => this.ButtonHoverState(BackButton) )
             .on('pointerout', () => this.ButtonRestState(BackButton) );
 

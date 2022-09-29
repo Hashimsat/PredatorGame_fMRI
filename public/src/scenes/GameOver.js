@@ -12,8 +12,8 @@ export default class GameOver extends Phaser.Scene
         this.MouseX = data.mousetrackX
         this.MouseY = data.mousetrackY
 
-        this.scale.setGameSize(1070,640)
-        this.scale.updateBounds();
+        // this.scale.setGameSize(1070,640)
+        // this.scale.updateBounds();
     }
 
     constructor()
@@ -22,16 +22,15 @@ export default class GameOver extends Phaser.Scene
     }
 
     scoreNormalized
-    NumberTrialsNotMoved
+    NumberTrialsNotON
 
     create()
     {
 
         const width = this.scale.width
         const height = this.scale.height
-        const BlockLimit = 6    //Number of blocks; 30 trials per block
+        const BlockLimit = 6;    //Number of blocks; 30 trials per block
 
-        // this.scoreNormalized = ScoreNormalization(this,this.cache.game.data.torchMoved,this.cache.game.data.Totalscore)
 
         saveData(this)
 
@@ -39,7 +38,6 @@ export default class GameOver extends Phaser.Scene
 
         if (this.cache.game.blockNum < BlockLimit) {
 
-            console.log(this.cache.game.blockNum)
             this.add.text(width * 0.5, height * 0.1, `Block ${this.cache.game.blockNum} of ${BlockLimit} Completed!`, {
                 fontSize: 40
             })
@@ -55,7 +53,7 @@ export default class GameOver extends Phaser.Scene
             })
                 .setOrigin(0.5)
 
-            this.add.text(width * 0.5, height * 0.45, 'Trials where torch not moved:' + this.NumberTrialsNotMoved, {
+            this.add.text(width * 0.5, height * 0.45, 'Trials where Flame Was Not Turned On:' + this.NumberTrialsNotON, {
                 fontSize: 25
             })
                 .setOrigin(0.5)

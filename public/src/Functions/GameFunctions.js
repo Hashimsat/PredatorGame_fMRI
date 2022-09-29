@@ -396,14 +396,15 @@ export const PredatorWarning = (scene,texture) => {
     // });
     // var txt = this.add.text(30, 200, texture);
     // txt.setColor('white')
+    Alarm(scene)
     ScoreUpdate(scene)  //Score only updates once predator warning appears
 
-    var predatorText = scene.make.text({x: 320,
-        y: 95,
+    var predatorText = scene.make.text({x: scene.sc_widt,
+        y: scene.sc_high - 240,
         text: 'Predator: ' + texture + ' ' + scene.predator.SpeedType,
         origin: 0.5,
         style: {
-            font: 'bold 15px Arial',
+            font: 'bold 14px Arial',
             fill: 'white',
             backgroundColor: 'rgba(6,9,199,0.78)',
         },
@@ -429,12 +430,12 @@ export const PromptToPlaceTorch = (scene) => {
 
     // This function creates text prompting players to move and place torch
 
-    var promptText = scene.make.text({x: 320,
-        y: 80,
+    var promptText = scene.make.text({x: scene.sc_widt,
+        y: scene.sc_high - 260,
         text: 'Please Choose Torch Location',
         origin: 0.5,
         style: {
-            font: 'bold 16px Arial',
+            font: 'bold 15px Arial',
             fill: 'white',
             backgroundColor: 'rgba(236,87,7,0.78)'
 
@@ -481,9 +482,9 @@ export const PromptToPlaceTorch = (scene) => {
 // }
 
 export const TrainingPromptToMoveTorch = (scene) => {
-    var promptText = scene.make.text({x: 320,
-        y: 85,
-        text: 'Please Activate Torch by'  + ' Clicking on Avatar'+ '\n'  + ' and Choose Torch Location',  ///
+    var promptText = scene.make.text({x: scene.sc_widt,
+        y: scene.sc_high - 250,
+        text: 'Please Activate Torch by'  + ' Clicking on Avatar'+ '\n'  + ' and Choose Torch Location by Clicking Again',  ///
         origin: 0.5,
         style: {
             font: 'bold 15px Arial',
@@ -500,8 +501,8 @@ export const TrainingPromptToMoveTorch = (scene) => {
 }
 
 export const PromptToTurnTorchOn = (scene) => {
-    var promptText = scene.make.text({x: 320,
-        y: 85,
+    var promptText = scene.make.text({x: scene.sc_widt,
+        y: scene.sc_high - 250,
         text: 'Please Turn Torch Flame On by' +'\n' +' Clicking Left Mouse Button',
         origin: 0.5,
         style: {
@@ -591,11 +592,9 @@ export const PlayerPredatorCollision = (scene,train) => {
                // console.log('animation complete')
                 scene.torch_initiation = 0
                 scene.addData()
-
                 scene.Player.destroy();
 
                 scene.time.delayedCall(40, scene.scene.restart(), [], scene)
-                //this.scene.restart()
 
 
             })
@@ -675,6 +674,7 @@ export const TorchPredatorMarkers = (scene) => {
         checkpoint = Phaser.Geom.Intersects.GetLineToCircle(PredatorPlayerLine,circle) //find intersection between circle and line
 
 
+
         xi = checkpoint[0].x
         yi= checkpoint[0].y
 
@@ -695,7 +695,7 @@ export const OptimalTorchLocationMarker = (scene,ActualPredatorMean) => {
 
     let MeanY = scene.sc_widt + Y
     let MeanX = scene.sc_high + X
-    const optimal_loc = scene.add.line(MeanX, MeanY, 0, 0, 10, 10, 0x399a2d)
+    const optimal_loc = scene.add.line(MeanX, MeanY, 0, 0, 15, 15, 0x399a2d)
     optimal_loc.setRotation(AngleRad + 40)  //40 subtracted so line is appropriately representing prev loc
 
 
@@ -749,7 +749,7 @@ export const MovingText = (scene, text, object) => {
 
     // this function shows the points added to score when players are successful in fending off predator
 
-    var TextToMove = scene.make.text({x: (object.x + Math.sign(object.x)*60),
+    var TextToMove = scene.make.text({x: (object.x + Math.sign(object.x - scene.sc_widt)*60),
         y: object.y + Math.sign(object.y)*60,
         text: '+ ' + text,
         origin: 0.5,
@@ -852,17 +852,15 @@ export const ScoreNormalization = (scene,torchMoveArray,score) => {
 
 }
 
-export const ScoreSubtraction = (scene,score,trialsMoved) =>{
+export const ScoreSubtraction = (scene,trialsMoved,score) =>{
     let CorrectedScore
     let NoMovementNum
 
-   // console.log('score1 is',score)
 
     NoMovementNum = trialsMoved.filter(element => element === 0).length;  //calculate number of zeros in array (trials in which torch was not moved)
 
     CorrectedScore = score - 10*NoMovementNum  //0 score penalty for each no movement trial
 
-    //console.log('corrected score is',CorrectedScore)
 
     if (CorrectedScore<=0){
         return [0,NoMovementNum]
@@ -878,7 +876,7 @@ export const saveData = (scene) =>  {
 
 
 
-    [scene.scoreNormalized,scene.NumberTrialsNotMoved] = ScoreSubtraction(scene,scene.cache.game.data.Totalscore[scene.trialcount-1],scene.cache.game.data.torchMoved)
+    [scene.scoreNormalized,scene.NumberTrialsNotON] = ScoreSubtraction(scene,scene.cache.game.data.torchON,scene.cache.game.data.Totalscore[scene.trialcount-1])
 
 
     if (scene.game.highscore < scene.scoreNormalized){

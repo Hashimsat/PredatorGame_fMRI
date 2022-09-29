@@ -63,7 +63,7 @@ export default class GameScene extends Phaser.Scene {
     score = 0
     ScoreIncrement = 0
     FirstTime = true
-    Max_lives = 30
+    Max_lives = 1
     lives = this.Max_lives;
 
 
@@ -71,6 +71,7 @@ export default class GameScene extends Phaser.Scene {
     startx
     starty
     MeanAngle
+    radPredCircle
 
     //variable to keep count of trials after changepoint
     AfterChangeCount
@@ -92,7 +93,7 @@ export default class GameScene extends Phaser.Scene {
     PredType; PredSpeed;  PredAttackTime
     PredStd;
     torchx=0;
-    torchy=0; torchangle = 0; torchsize; torchMovement=0;
+    torchy=0; torchangle = 0; torchsize; torchMovement=0; torchturnedON = 0;
     PredictAngle;Success; //success = 0 if player eaten by predator
     CP //changepoint , if CP = 1; Changepoint occurs, otherwise CP = 0
     RTInit;RTConf; RTTorchOn;
@@ -119,8 +120,8 @@ export default class GameScene extends Phaser.Scene {
 
     init(data) {
         this.playerImage = data.playerImageKey   //Gets the name of avatar chosen by participants in ChooseAvatar scene
-        this.scale.setGameSize(640,640)
-        this.scale.updateBounds();
+        // this.scale.setGameSize(window.innerWidth,window.innerHeight)
+        // this.scale.updateBounds();
     }
 
     constructor() {
@@ -144,10 +145,11 @@ export default class GameScene extends Phaser.Scene {
         this.trialNum = this.trialNum + 1
         this.CP = 0 //first trial not a changepoint
         this.torchMovement = 0 //torch not moved initially
+        this.torchturnedON = 0
         this.torchx = null;this.torchy=null;this.torchangle = null;
-        this.RTInit = null ; this.RTConf = null
+        this.RTInit = null ; this.RTConf = null ; this.RTTorchOn = null;
 
-        console.log(window.screen.availHeight)
+
 
 
 
@@ -164,7 +166,7 @@ export default class GameScene extends Phaser.Scene {
         //Initialize AfterChangePoint Variable, gets reset to zero after 3 trials
         // This count is kept so that there is a gap of atleast 3 trials between changepoints
 
-        console.log(this.sc_widt,this.sc_high)
+
 
         if (this.AfterChangeCount === 3)
         {
@@ -243,8 +245,8 @@ export default class GameScene extends Phaser.Scene {
 
         const scoreVal = 0; //initially put score  = 0
 
-        this.scoretext = this.make.text({x: 320,
-            y: 130,
+        this.scoretext = this.make.text({x: this.sc_widt,
+            y: this.sc_high - 200,
             text: scoreVal,
             origin: 0.5,
             style: {
@@ -268,6 +270,8 @@ export default class GameScene extends Phaser.Scene {
         //
 
         //
+        this.radPredCircle = Math.min(window.innerWidth,window.innerHeight)
+
         this.Player.on('pointerdown',function (){
             if (this.torch_initiation === 0) {
                 this.torch_initiation=1;  //click mouse on character to start moving torch
@@ -318,7 +322,7 @@ export default class GameScene extends Phaser.Scene {
 
         if (this.torch_initiation === 4){
 
-            console.log(this.torch_initiation)
+
             // After fixing torch, click again to turn torch on
             this.input.on('pointerdown', function () {
                 if (this.torch_initiation === 4) {
@@ -326,9 +330,10 @@ export default class GameScene extends Phaser.Scene {
                     var timeConfirm = new Date().getTime()   //calculates number of milliseconds since 1970 to current time
 
                     this.RTTorchOn = Math.abs(timeConfirm - this.game.ms)   //time at which participants turns torch on
+                    this.torchturnedON = 1;
 
                     this.torch_initiation = 5;
-                    console.log(this.torch_initiation)
+
                     this.Torch.setVisible(true);
                     this.Torch.body.enable = true;
                     this.torch_smoke.setVisible(true);
@@ -380,6 +385,7 @@ export default class GameScene extends Phaser.Scene {
         this.cache.game.data.PredatorAttackTime.push(this.predator.AttackTime)
 
         this.cache.game.data.torchMoved.push(this.torchMovement)
+        this.cache.game.data.torchON.push(this.torchturnedON)
         this.cache.game.data.torch_x.push(this.torchx)
         this.cache.game.data.torch_y.push(this.torchy)
         this.cache.game.data.torchSize.push(this.torchsize)
@@ -425,6 +431,7 @@ export default class GameScene extends Phaser.Scene {
         this.lives = this.Max_lives
         this.FirstTime = true
         this.torch_initiation = 0
+        this.torchturnedON = 0
         this.Prev_torch_x = null
         this.Prev_torch_y = null
         this.scene.start('game-over', {score: this.score,MaxLives: this.Max_lives ,trialNumbers: this.trialNum, Discontinued: this.Discontinue, mousetrackX: this.Mouse_x,mousetrackY: this.Mouse_y})
@@ -451,7 +458,12 @@ export default class GameScene extends Phaser.Scene {
 
         // radius equal to length of one side, so animal always appears from circle that touches edges/sides of square (circle inside square)
 
-        var rad = this.sc_widt
+        // var rad = Math.min(this.sc_widt,this.sc_high);
+        // // var rad =this.radPredCircle/2
+        var rad = 320
+
+
+
         var NormallyDistributedAngle
         let Choice = 0
 

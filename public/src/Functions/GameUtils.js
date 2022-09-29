@@ -132,8 +132,8 @@ export const LoadingBar = (scene) => {
     let progressBox = scene.add.graphics();
     // let width = scene.scale.width;
     // let height = scene.scale.height;
-    let width = 350;
-    let height = 600;
+    let width = scene.scale.width/2;
+    let height = scene.scale.height;
 
     progressBox.fillStyle(0x222222, 0.8);
     progressBox.fillRect(width/2, height/2, 320, 50);

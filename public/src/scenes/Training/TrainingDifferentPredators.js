@@ -262,13 +262,11 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
 
         if (this.torch_initiation === 4){
 
-            console.log(this.torch_initiation)
             // After fixing torch, click again to turn torch on
             this.input.on('pointerdown', function () {
                 if (this.torch_initiation === 4) {
 
                     this.torch_initiation = 5;
-                    console.log(this.torch_initiation)
                     this.Torch.setVisible(true);
                     this.Torch.body.enable = true;
                     this.torch_smoke.setVisible(true);

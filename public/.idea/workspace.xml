@@ -1,11 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3549ecf6-44eb-4542-a7a3-afd775f3625a" name="Changes" comment="" />
+    <list default="true" id="3549ecf6-44eb-4542-a7a3-afd775f3625a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/scenes/Instructions/FirstPredatorPracticeInstructions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Resize1.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/Resize1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Resize2.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/Resize2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Resize3.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/Resize3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Resize4.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/Resize4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Resize5.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/Resize5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Resize6.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/Resize6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Resize7.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/Resize7.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Resize8.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/Resize8.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Resize9.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/Resize9.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Functions/GameFunctions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Functions/GameFunctions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Functions/GameUtils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Functions/GameUtils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/ChooseAvatar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/ChooseAvatar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/GameOver.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/GameOver.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/GameScene.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/GameScene.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/Instructions/FinalPracticeInstructions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/Instructions/FinalPracticeInstructions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/Instructions/SecondPracticeInstructions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/Instructions/SecondPracticeInstructions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/Instructions/StartingInstructions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/Instructions/StartingInstructions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/Instructions/ThirdPracticeInstructions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/Instructions/ThirdPracticeInstructions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/MenuScene.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/MenuScene.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/Training/TrainingDifferentPredators.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/Training/TrainingDifferentPredators.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/Training/TrainingLast.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/Training/TrainingLast.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/Training/TrainingPredatorMean.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/Training/TrainingPredatorMean.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/Training/TrainingPredatorVariance.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/Training/TrainingPredatorVariance.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/Training/TrainingTaskDesign.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/Training/TrainingTaskDesign.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -19,6 +50,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="26WCIeaOT0LCwkXajBVcqOIxrqP" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -52,7 +84,7 @@
       <workItem from="1647529878551" duration="44000" />
       <workItem from="1647529970653" duration="29932000" />
       <workItem from="1663664865191" duration="19000" />
-      <workItem from="1663664916017" duration="20157000" />
+      <workItem from="1663664916017" duration="35833000" />
     </task>
     <servers />
   </component>

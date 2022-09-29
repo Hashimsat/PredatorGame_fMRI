@@ -9,6 +9,7 @@ import TrainingPredatorVariance from "./scenes/Training/TrainingPredatorVariance
 import TrainingDifferentPredators from "./scenes/Training/TrainingDifferentPredators.js"
 import TrainingLast from "./scenes/Training/TrainingLast.js";
 import StartingInstructions from "./scenes/Instructions/StartingInstructions.js";
+import FirstPracticeInstructions from "./scenes/Instructions/FirstPredatorPracticeInstructions.js";
 import SecondPracticeInstructions from "./scenes/Instructions/SecondPracticeInstructions.js";
 import ThirdPracticeInstructions from "./scenes/Instructions/ThirdPracticeInstructions.js";
 import FinalPracticeInstructions from "./scenes/Instructions/FinalPracticeInstructions.js";
@@ -31,17 +32,50 @@ let config = {
     width: 640,
     height: 640,
 
-    autoCenter: true,
+
+    scale: {
+        // Or set parent divId here
+        parent: ChooseAvatar,
+
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+
+        // Or put game size here
+        // width: 1024,
+        // height: 768,
+
+        // Minimum size
+        min: {
+            width: 320,
+            height: 320
+        },
+        // Or set minimum size like these
+        // minWidth: 800,
+        // minHeight: 600,
+
+        // Maximum size
+        max: {
+            width: 640*2.5,
+            height: 640*2.5,
+        },
+        // Or set maximum size like these
+        // maxWidth: 1600,
+        // maxHeight: 1200,
+
+        zoom: 1,  // Size of game canvas = game size * zoom
+    },
+    autoRound: false,
+
     // CheckHeadphone,
     scene:[ChooseAvatar,MenuScene,
-        StartingInstructions,SecondPracticeInstructions,ThirdPracticeInstructions,FinalPracticeInstructions,TrainingGameDesign,
+        StartingInstructions,FirstPracticeInstructions,SecondPracticeInstructions,ThirdPracticeInstructions,FinalPracticeInstructions,TrainingGameDesign,
         TrainingPredatorMean,TrainingPredatorVariance,TrainingDifferentPredators,TrainingLast,PromptToStartGame,
         GameScene,GameOver,PrematureEnding, FailedSoundCheckEnding],
     physics: {
         default: 'arcade',
         arcade: {
             gravity: {y: 0},
-            debug: false
+            debug: true
         }
     }
 };
@@ -122,9 +156,9 @@ var check_consent = function (elem) {
 
         // variables that will be used to store data in firebase firestore
         game.dataKeys = ['Totalscore', 'trialNumber', 'PredatorType', 'PredatorName', 'Predator_x', 'Predator_y',
-            'PredatorAngle', 'PredatorMean', 'PredatorStd', 'PredatorSpeed', 'torchMoved', 'torch_x', 'torch_y',
+            'PredatorAngle', 'PredatorMean', 'PredatorStd', 'PredatorSpeed','torchMoved' ,'torchON', 'torch_x', 'torch_y',
             'torchAngle', 'torchSize', 'RTInitiation', 'RTConfirmation','RTTorchON', 'PredictionError', 'HitMiss', 'ChangePoint',
-            'PredatorAttackTime','LivesLeft'];
+            'PredatorAttackTime','LivesLeft','HeadPhoneCheckPassFail', 'HeadPhoneCheckScore', 'HeadPhonePassThreshold'];
 
 
         var db = firebase.firestore();
