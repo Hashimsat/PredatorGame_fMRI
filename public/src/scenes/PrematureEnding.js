@@ -5,8 +5,8 @@ import {ScoreSubtraction,saveData} from "../Functions/GameFunctions.js";
 export default class PrematureEnding extends Phaser.Scene
 {
     init(data){
-        this.scale.setGameSize(1070,640)
-        this.scale.updateBounds();
+        // this.scale.setGameSize(1070,640)
+        // this.scale.updateBounds();
 
         this.ScoreVal = data.score;
         this.Max_lives = data.MaxLives

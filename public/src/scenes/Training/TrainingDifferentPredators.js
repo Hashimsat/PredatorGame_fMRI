@@ -43,7 +43,7 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
     //Predator_PredefinedMean = [71,73,60,79,55,329,327,345,362,330]   //variance 15, means are 75 and 340
     Predator_PredefinedMean = [40,73,90,62,80,310,330,322,354,340]   //variance 20, means are 75 and 340
     Predator_ActualMean = [75,340]
-    Predator_PredefinedTypes = [2,3,3,1,2,1,2,1,3,1]
+    Predator_PredefinedTypes = [3,3,3,3,1,1,1,2,2,2]
 
 
 

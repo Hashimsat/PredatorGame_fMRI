@@ -38,10 +38,11 @@ export const InitializeGameObjects = (scene) => {
     scene.torch_smoke = scene.physics.add.sprite(scene.sc_widt,scene.sc_high,'torch_smoke').setInteractive().setImmovable(true)
     scene.torch_smoke.setVisible(false)
     scene.torch_smoke.setScale(scene.MinimumFlameSize+scene.MinimumFlameSize/2);
+    // scene.torch_smoke.setScale(0.68)
     scene.torch_smoke.setOrigin(0.5, 0.75)
     scene.torch_smoke.play('smoke')
 
-    scene.torch_smoke.body.setCircle(100,15,85)
+    scene.torch_smoke.body.setCircle(100,20,78)
     scene.torch_smoke.body.enable = false
 
 
@@ -55,6 +56,7 @@ export const InitializeGameObjects = (scene) => {
     // put a circular body around torch, centered correctly
 
     scene.Torch.body.setCircle(100,10,167)
+    scene.Torch.body.debugShowBody = false;
 
     // var body =scene.Torch.body
     // var debug = scene.game.debug
@@ -71,10 +73,10 @@ export const InitializeGameObjects = (scene) => {
 
 
 
-    scene.torch_handle = scene.physics.add.sprite(scene.sc_widt,scene.sc_high,'torch-handle').setScale(0.15,0.3)
+    scene.torch_handle = scene.physics.add.sprite(scene.sc_widt,scene.sc_high,'torch-handle').setScale(0.18,0.4)
     scene.torch_handle.body.debugShowBody = false;
     scene.torch_handle.setVisible(false)
-    scene.torch_handle.setOrigin(0.3,-0.1)
+    scene.torch_handle.setOrigin(0.5,0) //0.3,-0.1
 
 
 

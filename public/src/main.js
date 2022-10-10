@@ -56,7 +56,7 @@ let config = {
         // Maximum size
         max: {
             width: 640*2.5,
-            height: 640*2.5,
+            height: 640*1.5,
         },
         // Or set maximum size like these
         // maxWidth: 1600,
@@ -75,7 +75,7 @@ let config = {
         default: 'arcade',
         arcade: {
             gravity: {y: 0},
-            debug: true
+            debug: false
         }
     }
 };
@@ -222,113 +222,113 @@ var check_consent = function (elem) {
 
 // Consent form
 
-    document.getElementById('header_title').innerHTML = "Predator game";
-    document.getElementById('consent').innerHTML = "        <p><b>Who is conducting this research study?</b><p>\n" +
-        "        <p>\n" +
-        "        This research is being conducted by Freie Universität Berlin and Max Planck School of Cognition.\n" +
-        "        \n" + "<br>" +
-        "        The lead researcher(s) for this project are\n" +
-        "        <a href=\"mailto:m.hashim.satti@maxplanckschools.de\">Muhammad Hashim Satti</a> and <a href=\"mailto:rasmusb@zedat.fu-berlin.de\">Dr. Rasmus Bruckner</a>.\n" +
-        "        </p>\n" +
-        "\n" +
-        "        <p><b>What is the purpose of this study?</b><p>\n" +
-        "        <p>\n" +
-        "        We are interested in studying the processes and principles that help us make decisions under uncertain conditions. \n" +
-        "\n"  + "<br>" +
-        "        This research aims to provide\n" +
-        "        insights into how the healthy brain works, and this can then help us to understand the causes of a number of different medical\n" +
-        "        conditions.\n" +
-        "        </p>\n" +
-        "\n" +
-        "        <p><b>Who can participate in the study?</b><p>\n" +
-        "        <p>\n" +
-        "            You must be 18 or over to participate in this study. Please confirm this to proceed.\n" +
-        "        </p>\n" +
-        "         <label class=\"container\">I confirm I am over 18 years old\n" +
-        "                <input type=\"checkbox\" id=\"consent_checkbox1\">\n" +
-        "                <span class=\"checkmark\"></span>\n" +
-        "            </label>\n" +
-        "        <br>\n" +
-        "\n" +
-        "        <p><b>What will happen to me if I take part?</b><p>\n" +
-        "        <p>\n" +
-        "            You will play an online computer game with a total of 6 blocks. The total duration of the game will be approximately 50 - 60 minutes. \n" +
+document.getElementById('header_title').innerHTML = "Predator game";
+document.getElementById('consent').innerHTML = "        <p><b>Who is conducting this research study?</b><p>\n" +
+    "        <p>\n" +
+    "        This research is being conducted by Freie Universität Berlin and Max Planck School of Cognition.\n" +
+    "        \n" + "<br>" +
+    "        The lead researcher(s) for this project are\n" +
+    "        <a href=\"mailto:m.hashim.satti@maxplanckschools.de\">Muhammad Hashim Satti</a> and <a href=\"mailto:rasmusb@zedat.fu-berlin.de\">Dr. Rasmus Bruckner</a>.\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <p><b>What is the purpose of this study?</b><p>\n" +
+    "        <p>\n" +
+    "        We are interested in how anxiety affects decision making when the future is uncertain and when faced \n" +
+    "        with different types of threats. This research aims to provide\n" +
+    "        insights into how the healthy brain works to help us understand the causes of a number of different medical\n" +
+    "        conditions.\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <p><b>Who can participate in the study?</b><p>\n" +
+    "        <p>\n" +
+    "            You must be 18 or over to participate in this study. Please confirm this to proceed.\n" +
+    "        </p>\n" +
+    "         <label class=\"container\">I confirm I am over 18 years old\n" +
+    "                <input type=\"checkbox\" id=\"consent_checkbox1\">\n" +
+    "                <span class=\"checkmark\"></span>\n" +
+    "            </label>\n" +
+    "        <br>\n" +
+    "\n" +
+    "        <p><b>What will happen to me if I take part?</b><p>\n" +
+    "        <p>\n" +
+    "            You will play an online computer game with a total of 6 blocks. The total duration of the game will be approximately 50 - 60 minutes, and it includes two Sound Checks. \n" +
+    "            You will not be able to take part in this study if you fail the Sound Checks. " +
 
-        "        <p>    You will receive" +
+    "        <p>    You will receive" +
 
-        "            at least €8 per hour for helping us through this research.  You will also be \n " +
-        "        given added bonus of 50 cents for each block in which you score greater than 1200 points. This bonus would be reimbursed after  \n"  +
-        "        we have reviewed your data and might take a few days.\n"  +
-
-
-        "       <br> \n    We would analyze the data obtained through this task to understand how uncertainty affects behaviour in complex scenarios.\n" +
-        "       <p>     Remember, you are free to withdraw at any time without giving a reason by pressing Esc Button.\n\n" +
-        "        </p>\n" +
-        "\n" +
-        "        <p><b>What are the possible disadvantages and risks of taking part?</b><p>\n" +
-        "        <p>\n" +
-        "            The task does not pose any risks and disadvantages to most people.\n" +
-        "        </p>\n" +
-
-        "\n" +
-        "        <p><b>What are the possible benefits of taking part?</b><p>\n" +
-        "        <p>\n" +
-        "            While there are no immediate benefits to taking part, your participation in this research will help us\n" +
-        "        understand how people make decisions under uncertainty and this could have benefits\n"+
-"                for furthering our understanding of principles underlying learning and decision making.\n" +
-        "        </p>\n" +
-
-        "\n" +
-        "        <p><b>What about my data?</b><p>\n" +
-        "        <p>\n" +
-        "            To help future research and make the best use of the research data you have given us \n" +
-        "         we may keep your research data indefinitely and share these.  The data we collect will\n" +
-        "        be shared and held as follows:\n" +
-        "<br>\n"+
-        "            •\tIn publications, your data will be anonymised, so you cannot be identified.\n" +
-        "<br>\n"+
-        "            •\tIn public databases, your data will be pseudonymised. \n" +
-        "<br><br>\n" +
-        "        If there are any queries or concerns please do not hesitate to contact:\n" +
-        "        <a href=\"mailto:m.hashim.satti@maxplanckschools.de\">Muhammad Hashim Satti</a>\n" +
-        "        </p>\n" +
-        "\n" +
-        "        <p><b>If you are happy to proceed please read the statement below and click the boxes to show that you\n" +
-        "            consent to this study proceeding</b><p>\n" +
-        "\n" +
-        "        <label class=\"container\">I have read the information above, and understand what the study involves.\n" +
-        "            <input type=\"checkbox\" id=\"consent_checkbox2\">\n" +
-        "            <span class=\"checkmark\"></span>\n" +
-        "        </label>\n" +
-        "<br>\n" +
-        "\n"+
-        "        <label class=\"container\">I understand that my anonymised/pseudonymised personal data can be shared with others\n" +
-        "            for future research, shared in public databases and in scientific reports.\n" +
-        "            <input type=\"checkbox\" id=\"consent_checkbox3\">\n" +
-        "            <span class=\"checkmark\"></span>\n" +
-        "        </label>\n" +
-        "<br>\n" +
-        "        <label class=\"container\">I understand that I am free to withdraw from this study at any time without\n" +
-        "            giving a reason and this will not affect my future medical care or legal rights.\n" +
-        "            <input type=\"checkbox\" id=\"consent_checkbox4\">\n" +
-        "            <span class=\"checkmark\"></span>\n" +
+    "            at least €8 per hour for helping us through this research.  You will also be \n " +
+    "        given added bonus of 50 cents for each block in which you score greater than 1000 points. This bonus would be reimbursed after  \n"  +
+    "        we have reviewed your data and might take a few days.\n"  +
 
 
-        "<br>\n" +
-        "        <label class=\"container\">I agree that the research project named above has been explained to me to my\n" +
-        "            satisfaction and I agree to take part in this study\n" +
-        "            <input type=\"checkbox\" id=\"consent_checkbox5\">\n" +
-        "            <span class=\"checkmark\"></span>\n" +
-        "        </label>\n" +
-        "\n" +
-        "        <br><br><br>\n" +
-        "        <button type=\"button\" style='background-color:black;color: white;margin: auto;display: block ' id=\"start\" class=\"submit_button\">Start Experiment</button>\n" +
-        "        <br><br>";
+    "       <br> \n    We would analyze the data obtained through this task to understand how anxiety affects behaviour in complex scenarios.\n" +
+    "       <p>     Remember, you are free to withdraw at any time without giving a reason by pressing Esc Button.\n\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <p><b>What are the possible disadvantages and risks of taking part?</b><p>\n" +
+    "        <p>\n" +
+    "            The task aims to induce anxiety and has some aversive stimuli (sounds) that might not be suitable for all.\n" +
+    "        </p>\n" +
+    "\n" +  "PLEASE KEEP YOUR HEADPHONES AT 30% - 50% VOLUME.    " +
+    "\n" +
+    "        <p><b>What are the possible benefits of taking part?</b><p>\n" +
+    "        <p>\n" +
+    "            While there are no immediate benefits to taking part, your participation in this research will help us\n" +
+    "        understand how people make decisions under the effect of anxiety and this could have benefits\n"+
+    "                for our understanding of mental health problems.\n" +
+    "        </p>\n" +
+
+    "\n" +
+    "        <p><b>What about my data?</b><p>\n" +
+    "        <p>\n" +
+    "            To help future research and make the best use of the research data you have given us \n" +
+    "         we may keep your research data indefinitely and share these.  The data we collect will\n" +
+    "        be shared and held as follows:\n" +
+    "<br>\n"+
+    "            •\tIn publications, your data will be anonymised, so you cannot be identified.\n" +
+    "<br>\n"+
+    "            •\tIn public databases, your data will be pseudonymised. \n" +
+    "<br><br>\n" +
+    "        If there are any queries or concerns please do not hesitate to contact:\n" +
+    "        <a href=\"mailto:m.hashim.satti@maxplanckschools.de\">Muhammad Hashim Satti</a>\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <p><b>If you are happy to proceed please read the statement below and click the boxes to show that you\n" +
+    "            consent to this study proceeding</b><p>\n" +
+    "\n" +
+    "        <label class=\"container\">I have read the information above, and understand what the study involves.\n" +
+    "            <input type=\"checkbox\" id=\"consent_checkbox2\">\n" +
+    "            <span class=\"checkmark\"></span>\n" +
+    "        </label>\n" +
+    "<br>\n" +
+    "\n"+
+    "        <label class=\"container\">I understand that my anonymised/pseudonymised personal data can be shared with others\n" +
+    "            for future research, shared in public databases and in scientific reports.\n" +
+    "            <input type=\"checkbox\" id=\"consent_checkbox3\">\n" +
+    "            <span class=\"checkmark\"></span>\n" +
+    "        </label>\n" +
+    "<br>\n" +
+    "        <label class=\"container\">I understand that I am free to withdraw from this study at any time without\n" +
+    "            giving a reason and this will not affect my future medical care or legal rights.\n" +
+    "            <input type=\"checkbox\" id=\"consent_checkbox4\">\n" +
+    "            <span class=\"checkmark\"></span>\n" +
 
 
-    document.getElementById("start").onclick = check_consent;
+    "<br>\n" +
+    "        <label class=\"container\">I agree that the research project named above has been explained to me to my\n" +
+    "            satisfaction and I agree to take part in this study\n" +
+    "            <input type=\"checkbox\" id=\"consent_checkbox5\">\n" +
+    "            <span class=\"checkmark\"></span>\n" +
+    "        </label>\n" +
+    "\n" +
+    "        <br><br><br>\n" +
+    "        <button type=\"button\" style='background-color:black;color: white;margin: auto;display: block ' id=\"start\" class=\"submit_button\">Start Experiment</button>\n" +
+    "        <br><br>";
 
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        alert("Sorry, this experiment does not work on mobile devices");
-        document.getElementById('consent').innerHTML = "";
-    }
+
+document.getElementById("start").onclick = check_consent;
+
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    alert("Sorry, this experiment does not work on mobile devices");
+    document.getElementById('consent').innerHTML = "";
+}

@@ -41,8 +41,8 @@ export default class TrainingLast extends Phaser.Scene {
     //Predator_Speed = 300  //currently this is the speed at which predators appear
     Predator_Speed = 300
     //Predator_PredefinedMean = [71,73,60,79,55,329,327,345,362,330]   //variance 15, means are 75 and 340
-    Predator_PredefinedMean = [40,73,90,62,80,310,330,322,354,340]   //variance 20, means are 75 and 340
-    Predator_PredefinedTypes = [2,3,2,2,1,1,3,1,3,1]
+    Predator_PredefinedMean = [49,352,358,19,21,0,12,354,168,203,198,207,145,171,213]   //std 20, means are 180 and 10
+    Predator_PredefinedTypes = [2,2,2,2,2,3,3,3,3,3,1,1,1,1,1]
     ShowPredators
 
     //Get center of image
@@ -197,7 +197,7 @@ export default class TrainingLast extends Phaser.Scene {
         //End game if escape pressed
         this.escape = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
 
-        if (this.trialNum >= 10){
+        if (this.trialNum >= 15){
             this.trialNum = 0
             this.FirstTime = true
             this.torch_initiation = 0;

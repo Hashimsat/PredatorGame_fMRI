@@ -227,7 +227,7 @@ export default class TrainingGameDesign extends Phaser.Scene {
             this.lives--
 
             this.time.addEvent({
-                delay: 700,
+                delay: 900,
                 callback: () => {
 
                     this.scene.restart()

@@ -298,7 +298,7 @@ export const PredatorArrival = (scene,predatora,train) => {
 
     //function that makes the predator arrive on the screen after a small delay
 
-    scene.time.addEvent({
+    scene.time.addEvent({ //,
         delay: predatora.AttackTime,
         callback: () => {
 
@@ -354,7 +354,8 @@ export const PredatorArrival = (scene,predatora,train) => {
             predatora.scene.add.existing(predatora)
 
            // console.log('Predator Spedd 2 is',scene.Predator_Speed)
-            var rotateAngle = scene.physics.moveTo(predatora, scene.Player.x,scene.Player.y, scene.Predator_Speed)
+           //  var rotateAngle = scene.physics.moveTo(predatora, scene.Player.x,scene.Player.y, scene.Predator_Speed)
+            var rotateAngle = scene.physics.moveTo(predatora, scene.sc_widt,scene.sc_high, scene.Predator_Speed)
            // console.log('Angle is',Phaser.Math.RadToDeg(rotateAngle))
             RotatePredatorToPlayer(scene,rotateAngle,predatora,scene.Player)
             scene.Prev_predator_angle = rotateAngle;
@@ -483,7 +484,7 @@ export const PromptToPlaceTorch = (scene) => {
 
 export const TrainingPromptToMoveTorch = (scene) => {
     var promptText = scene.make.text({x: scene.sc_widt,
-        y: scene.sc_high - 250,
+        y: scene.sc_high - 230,
         text: 'Please Activate Torch by'  + ' Clicking on Avatar'+ '\n'  + ' and Choose Torch Location by Clicking Again',  ///
         origin: 0.5,
         style: {
@@ -502,7 +503,7 @@ export const TrainingPromptToMoveTorch = (scene) => {
 
 export const PromptToTurnTorchOn = (scene) => {
     var promptText = scene.make.text({x: scene.sc_widt,
-        y: scene.sc_high - 250,
+        y: scene.sc_high - 230,
         text: 'Please Turn Torch Flame On by' +'\n' +' Clicking Left Mouse Button',
         origin: 0.5,
         style: {

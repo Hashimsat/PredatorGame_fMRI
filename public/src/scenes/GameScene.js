@@ -54,6 +54,7 @@ export default class GameScene extends Phaser.Scene {
     torch_smoke
 
     Predator_Speed = 300  //currently this is the speed at which predators attack
+    PredatorArray = [1,2,3]
 
     //Get center of image
     sc_widt
@@ -63,7 +64,7 @@ export default class GameScene extends Phaser.Scene {
     score = 0
     ScoreIncrement = 0
     FirstTime = true
-    Max_lives = 1
+    Max_lives = 5
     lives = this.Max_lives;
 
 
@@ -176,13 +177,19 @@ export default class GameScene extends Phaser.Scene {
 
         //set initial position of predator (location from where it will appear from)
 
-        this.PredatorStartLocationUpdated()   //function found in GameFunctions
+        this.PredatorStartLocationUpdated()   //function found in this scene
 
 
         //Select a predator randomly from the 3 options available
 
-        const PredatorArray = [1, 2, 3]   //each number represents a specific predator; 1=Cheetah, 2=Panther; 3=Snow
-        this.PredType = Phaser.Utils.Array.GetRandom(PredatorArray)   //choose one number randomly from PredatorArray
+        if (this.trialNum === 1) {
+            this.ChoosePredatorBlocked()
+        }
+
+        //
+        // const PredatorArray = [1, 2, 3]   //each number represents a specific predator; 1=Cheetah, 2=Panther; 3=Snow
+        // this.PredType = Phaser.Utils.Array.GetRandom(PredatorArray)   //choose one number randomly from PredatorArray
+
 
         //ChoosePredator function chooses predator depending upon the value in this.PredType
         this.predator = ChoosePredator(this,this.PredType,this.startx,this.starty)
@@ -218,7 +225,7 @@ export default class GameScene extends Phaser.Scene {
         // for( let i = 0; i<=360; ){
         //
         //         var angleCh = Phaser.Math.DegToRad(i)
-        //         var line = this.add.line(320,320,0,0,400,400,0x0096b7,1.5);
+        //         var line = this.add.line(320,320,0,0,450,450,0x0096b7,1.5);
         //         line.setAngle(i)
         //
         //         i = i+5
@@ -640,6 +647,21 @@ export default class GameScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
+    }
+
+
+    ChoosePredatorBlocked(){
+
+        if (!this.PredatorArray.length){   // Refill predator array if it goes empty (after 3rd block)
+            this.PredatorArray = [1,2,3];
+        }
+
+        const randomItem = arr => arr.splice((Math.random() * arr.length) | 0, 1); //Pop a random item out of array
+        this.PredType = randomItem(this.PredatorArray)[0]   //choose one number randomly from PredatorArray
+
+        console.log(this.PredType)
+        console.log(this.PredatorArray)
 
     }
 

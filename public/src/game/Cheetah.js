@@ -20,7 +20,7 @@ export default class Cheetah extends Phaser.Physics.Arcade.Sprite
         this.speedo = 50
         this.name = 'CheeRunner'
         this.ActualName = 'Cheetah'
-        this.AttackTime = 900 //850  //1900 is time after torch placement after which animal arrives
+        this.AttackTime = 1000 //850  //1900 is time after torch placement after which animal arrives
         this.SpeedType = '(Fast)'
         this.PointsPossible = '(10)'
 
