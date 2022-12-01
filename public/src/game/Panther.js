@@ -26,5 +26,6 @@ export default class Panther extends Phaser.Physics.Arcade.Sprite
         this.active =true
         this.name = 'PantherRunner'
         this.ActualName = 'Panther'
+        this.fileName = 'PantherRun'
     }
 }

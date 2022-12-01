@@ -14,6 +14,9 @@ import {
     PredatorWarning,
     mod,
     PromptToPlaceTorch,
+    PredatorAttackingPlayer,
+    movePredatorinCircularPath,
+    CircularDistance
 } from "../Functions/GameFunctions.js";
 import {InitializeGameObjects,preloadInit} from "../Functions/GameUtils.js";
 
@@ -64,7 +67,7 @@ export default class GameScene extends Phaser.Scene {
     score = 0
     ScoreIncrement = 0
     FirstTime = true
-    Max_lives = 5
+    Max_lives = 30
     lives = this.Max_lives;
 
 
@@ -84,8 +87,8 @@ export default class GameScene extends Phaser.Scene {
     Prev_predator_x
     Prev_predator_y
     Prev_predator_angle
-    Prev_Player_Finalx
-    Prev_Player_Finaly
+    Prev_Player_Finalx = 320+175
+    Prev_Player_Finaly = 320
 
 
     //Variables for Data Collection -> Trial Info
@@ -107,6 +110,12 @@ export default class GameScene extends Phaser.Scene {
 
     // Prompt text var
     Prompt; PredatorText
+
+    //zone
+    zone
+    zone_collider = 0  // variable that allows the leaving zone function to run only once
+    theta
+    AngularDistance
 
 
 
@@ -149,6 +158,7 @@ export default class GameScene extends Phaser.Scene {
         this.torchturnedON = 0
         this.torchx = null;this.torchy=null;this.torchangle = null;
         this.RTInit = null ; this.RTConf = null ; this.RTTorchOn = null;
+        this.zone_collider = 0
 
 
 
@@ -192,7 +202,7 @@ export default class GameScene extends Phaser.Scene {
 
 
         //ChoosePredator function chooses predator depending upon the value in this.PredType
-        this.predator = ChoosePredator(this,this.PredType,this.startx,this.starty)
+        this.predator = ChoosePredator(this,this.PredType,this.sc_widt, this.sc_high)
         //StartDelayTest(this,this.predator,this.train)   //add a delay after which warning occurs, and then predator appears after another delay that depends upon type of predator chosen
 
 
@@ -221,7 +231,7 @@ export default class GameScene extends Phaser.Scene {
 
         // Degrees to pixel conversion debug
         // var g1 = this.add.grid(320, 320, 250, 250, 5, 5, 0xff0000).setAltFillStyle(0x016fce).setOutlineStyle().setAlpha(0.5);
-
+        //
         // for( let i = 0; i<=360; ){
         //
         //         var angleCh = Phaser.Math.DegToRad(i)
@@ -246,6 +256,32 @@ export default class GameScene extends Phaser.Scene {
             TorchPredatorCollision(this,this.train)
 
         })
+
+        ///////////////////////
+        this.zone = this.add.zone(120, 120).setOrigin(0.5,0.5)
+        this.physics.world.enable(this.zone, 0); // (0) DYNAMIC (1) STATIC
+        this.zone.body.setAllowGravity(false);
+        this.zone.body.moves = false;
+        this.zone.body.setCircle(200);
+
+        console.log(this.zone)
+
+        this.physics.add.overlap(this.predator, this.zone);
+
+        this.zone.on('enterzone', () => console.log('enterzone'));
+        this.zone.on('leavezone', () => console.log('leavezone'));
+
+//         let zone = this.add.zone(320,320)
+//         this.physics.world.enable(zone);
+//         zone.body.setCircle(150);
+//
+// // 3. THE FUNCTION
+//         const onOverlap = (sprite, zone) => {
+//             console.log('THE SPRITE IS OVER THE ZONE')
+//         }
+//
+// // 4. WHERE EVERYTHING COMES TO LIVE.
+//         this.physics.add.overlap(this.predator, zone, onOverlap)
 
 
         //score count and update
@@ -366,6 +402,32 @@ export default class GameScene extends Phaser.Scene {
         }
 
 
+        ///////////
+        var touching = this.zone.body.touching;
+        var wasTouching = this.zone.body.wasTouching;
+
+        if (touching.none && !wasTouching.none  && this.zone_collider == 0) {
+            this.zone.emit('leavezone');
+            this.zone_collider = 1
+
+            this.AngularDistance = (CircularDistance(this,this.torchangle,this.PredAngle))
+
+            // PredatorAttackingPlayer(this,this.predator,this.PredAngle,this.torchangle)
+            // this.physics.moveTo(this.predator,this.Player.x,this.Player.y,this.predator.speedo)
+            this.physics.world.disable(this.zone)
+
+        }
+        else if (!touching.none && wasTouching.none) {
+            this.zone.emit('enterzone');
+
+        }
+
+        if (this.zone_collider == 1){
+            this.theta = movePredatorinCircularPath(this,this.predator,this.theta,this.AngularDistance)
+        }
+
+        this.zone.body.debugBodyColor = this.zone.body.touching.none ? 0x00ffff : 0xffff00;
+
 
 
 
@@ -406,7 +468,7 @@ export default class GameScene extends Phaser.Scene {
 
         if (this.torchMovement===1)
         {
-            this.PredictAngle = this.CircularDistance(this.PredAngle,this.torchangle) //calculate PE
+            this.PredictAngle = CircularDistance(this,this.PredAngle,this.torchangle) //calculate PE
 
         }
         else if(this.torchMovement === 0)
@@ -489,7 +551,7 @@ export default class GameScene extends Phaser.Scene {
             else if (this.AfterChangeCount === 0) {
 
 
-                let ChangeProbability = {1: 0.9, 2: 0.1}  //1 = stay same //2 = unexpected change point
+                let ChangeProbability = {1: 0.88, 2: 0.12}  //1 = stay same //2 = unexpected change point
 
                 let i, sum = 0, r = Math.random();
                 for (i in ChangeProbability) {
@@ -547,6 +609,7 @@ export default class GameScene extends Phaser.Scene {
 
         //Store values for further data storage
         this.PredAngle = NormallyDistributedAngle
+        this.theta = Phaser.Math.DegToRad(this.PredAngle)
 
         //store location of predator arrival on previous trial
         this.Prev_predator_x =this.startx;
@@ -609,30 +672,30 @@ export default class GameScene extends Phaser.Scene {
     }
 
 
-    CircularDistance(angle1,angle2){
-
-        //calculates distance between 2 angles, alongwith the sign showing if angle1 is > or < angle2
-        //formula: shortest distance = PI - abs(PI - abs(angle1 - angle2))
-
-        var term1 = Phaser.Math.DegToRad(angle1) - Phaser.Math.DegToRad(angle2)
-        var sign_term1 = Math.sign(term1)
-        var term2 = Math.PI - Math.abs(term1)
-        var sign_term2 = Math.sign(term2)
-        var sign_overall = sign_term1*sign_term2
-
-        if (sign_overall != 0) {
-            var shortest_distance = sign_overall * Phaser.Math.RadToDeg(Math.PI - Math.abs(term2))
-        }
-
-        else if (sign_overall === 0){
-            var shortest_distance = Phaser.Math.RadToDeg(Math.PI - Math.abs(term2))
-        }
-
-        return shortest_distance
-
-
-
-    }
+    // CircularDistance(angle1,angle2){
+    //
+    //     //calculates distance between 2 angles, alongwith the sign showing if angle1 is > or < angle2
+    //     //formula: shortest distance = PI - abs(PI - abs(angle1 - angle2))
+    //
+    //     var term1 = Phaser.Math.DegToRad(angle1) - Phaser.Math.DegToRad(angle2)
+    //     var sign_term1 = Math.sign(term1)
+    //     var term2 = Math.PI - Math.abs(term1)
+    //     var sign_term2 = Math.sign(term2)
+    //     var sign_overall = sign_term1*sign_term2
+    //
+    //     if (sign_overall != 0) {
+    //         var shortest_distance = sign_overall * Phaser.Math.RadToDeg(Math.PI - Math.abs(term2))
+    //     }
+    //
+    //     else if (sign_overall === 0){
+    //         var shortest_distance = Phaser.Math.RadToDeg(Math.PI - Math.abs(term2))
+    //     }
+    //
+    //     return shortest_distance
+    //
+    //
+    //
+    // }
 
     TrackMouse(){
 

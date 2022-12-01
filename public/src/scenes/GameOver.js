@@ -94,7 +94,7 @@ export default class GameOver extends Phaser.Scene
 
                 // Call headphone check in the middle of game
 
-                if (this.cache.game.blockNum-1 == Math.round(BlockLimit+2)){
+                if (this.cache.game.blockNum-1 == Math.round(BlockLimit/2)){
 
                     window.alert('Time for another Sound Check!')
                     this.scene.start('Checkheadphone',{ scenename: 'gameScene' })

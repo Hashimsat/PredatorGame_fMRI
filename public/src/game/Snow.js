@@ -20,6 +20,7 @@ export default class Snow extends Phaser.Physics.Arcade.Sprite
         this.active =true
         this.name = 'SnowyRunner'
         this.ActualName = 'Leopard'
+        this.fileName = 'SnowRun'
         this.AttackTime = 3000
         this.SpeedType = '(Moderate)'
         this.PointsPossible = '(30)'

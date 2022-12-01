@@ -34,11 +34,20 @@ export const moveTorchOnCircle =(scene,gameobjectTorch,handle,smoke,PlayerObject
 
     let theta = Math.atan2(x - scene.sc_widt, y - scene.sc_high)
 
-    TorchAngle = Math.PI - theta
+    let thetaPlayer = mod(-(theta + Math.PI/2) - Math.PI,2*Math.PI)
 
 
 
-    let [new1,new2] = AngleToCoordinates(scene,theta,scene.radius)
+    // let theta = Math.atan2(x, y)
+    TorchAngle = mod(Math.PI - theta,2*Math.PI)
+
+
+
+
+
+    // let [new1,new2] = AngleToCoordinates(scene,theta,scene.radius)
+
+    let [new1,new2] = AngleToCoordinates(scene,theta,150)
 
 
     gameobjectTorch.x = scene.sc_widt + new2;
@@ -54,9 +63,25 @@ export const moveTorchOnCircle =(scene,gameobjectTorch,handle,smoke,PlayerObject
 
 
 
-    gameobjectTorch.setRotation(TorchAngle)
-    handle.setRotation(TorchAngle);
-    smoke.setRotation(TorchAngle)
+    // gameobjectTorch.setRotation(TorchAngle)
+    // handle.setRotation(TorchAngle);
+    // smoke.setRotation(TorchAngle)
+
+    let angCheck = TorchAngle
+
+    // let angCheck = mod((-theta  - Math.PI),2*Math.PI)
+
+    gameobjectTorch.setRotation(angCheck)
+
+    console.log(angCheck,TorchAngle,theta)
+
+    gameobjectTorch.flipY = true
+    handle.setRotation(angCheck-0.005);
+    // handle.flipY = true
+    smoke.setRotation(angCheck)
+    smoke.flipY = true
+
+
 
     gameobjectTorch.setVisible(false)
     gameobjectTorch.body.enable = false
@@ -86,10 +111,12 @@ export const moveTorchOnCircle =(scene,gameobjectTorch,handle,smoke,PlayerObject
     //start moving player avatar with the torch when participants start moving torch
 
 
-    let [newPlayerX,newPlayerY] = AngleToCoordinates(scene,theta,5)
+    let [newPlayerX,newPlayerY] = AngleToCoordinates(scene,thetaPlayer,200)
     //5 is radius of circle around which player moves
     PlayerObject.x = (scene.sc_widt) + newPlayerX;
-    PlayerObject.y = (scene.sc_high-5) + newPlayerY;
+    PlayerObject.y = (scene.sc_high) + newPlayerY;
+
+
 
     // console.log(gameobjectTorch.x,gameobjectTorch.y,TorchAngle)
 
@@ -112,12 +139,14 @@ export const moveCharacterAroundCircle = (scene,Angle,PlayerObject) => {
     let AngleDeg = Phaser.Math.RadToDeg(Angle)
     var FrameNumber
 
+    console.log(AngleDeg)
+
     //Angle is 0 at South (270 deg). Angle is 180 at North. 180 to 0 from North to South through east, 0 to -180 from South to
     // North through west. Overall range from -180 to 180
 
     // 7 frames where avatar moves in 'right' direction. So frame change after 26 deg (180/7)
 
-    if (AngleDeg ===0)
+    if (AngleDeg ===  0)
         FrameNumber = 0
     PlayerObject.setFrame(FrameNumber)
 
@@ -126,7 +155,7 @@ export const moveCharacterAroundCircle = (scene,Angle,PlayerObject) => {
         //if player moving from South to North or North to South through east
         //Angle >20 degrees chosen so the character faces towards screen longer and doesn't turn
 
-        FrameNumber = Math.ceil(AngleDeg / 26);
+        FrameNumber = Math.ceil(AngleDeg / 26)+7;
 
         PlayerObject.setFrame(FrameNumber)
 
@@ -135,12 +164,29 @@ export const moveCharacterAroundCircle = (scene,Angle,PlayerObject) => {
 
     if (AngleDeg <-20) {
         //if player moving from South to North or North to South through west
-        FrameNumber = Math.ceil(-AngleDeg / 26)+7;
+        FrameNumber = Math.ceil(-AngleDeg / 26);
 
         PlayerObject.setFrame(FrameNumber)
 
     }
 
+    if(AngleDeg<20 & AngleDeg > -20) {
+        //if player moving from South to North or North to South through west
+        FrameNumber = 7
+
+        PlayerObject.setFrame(FrameNumber)
+
+    }
+
+    if(AngleDeg<-155 || AngleDeg > 155) {
+        //if player moving from South to North or North to South through west
+        FrameNumber = 0
+
+        PlayerObject.setFrame(FrameNumber)
+
+
+        console.log('FrameNum',FrameNumber)
+    }
 
 }
 
@@ -328,10 +374,10 @@ export const PredatorArrival = (scene,predatora,train) => {
             //     scalesize = 0.16   //max scale of flame is 0.16  //0.16 scale is approx. 46 deg
             // }
 
-            var scalesize = scene.MinimumFlameSize + RandomSampleFromExponential(1/0.68)   //Mean of exponential dist. = 1/lambda
+            var scalesize = scene.MinimumFlameSize + RandomSampleFromExponential(1/0.5)   //Mean of exponential dist. = 1/lambda
 
-            if (scalesize > 0.68 ){
-                scalesize = 0.68   //max scale of flame is 0.16
+            if (scalesize > 0.5 ){
+                scalesize = 0.5   //max scale of flame is 0.16
             }
 
             scene.Torch.setScale(scene.MinimumFlameSize + scalesize/4)   //minFlameSize added so size is between min flame size to end of distribution instead of starting from 0
@@ -355,7 +401,7 @@ export const PredatorArrival = (scene,predatora,train) => {
 
            // console.log('Predator Spedd 2 is',scene.Predator_Speed)
            //  var rotateAngle = scene.physics.moveTo(predatora, scene.Player.x,scene.Player.y, scene.Predator_Speed)
-            var rotateAngle = scene.physics.moveTo(predatora, scene.sc_widt,scene.sc_high, scene.Predator_Speed)
+            var rotateAngle = scene.physics.moveTo(predatora, scene.startx,scene.starty, scene.Predator_Speed)
            // console.log('Angle is',Phaser.Math.RadToDeg(rotateAngle))
             RotatePredatorToPlayer(scene,rotateAngle,predatora,scene.Player)
             scene.Prev_predator_angle = rotateAngle;
@@ -628,9 +674,13 @@ export const PlayerPredatorCollision = (scene,train) => {
 export const TorchPredatorCollision = (scene,train) => {
 
     //collider that makes predator run away if it collides with torch
+    scene.physics.world.disable(scene.zone)
+    scene.zone_collider = 2
     scene.Success = 1
-    const rotateAngle = scene.physics.moveTo(scene.predator, scene.startx,scene.starty, scene.Predator_Speed)
+    const rotateAngle = scene.physics.moveTo(scene.predator, scene.sc_widt,scene.sc_high, scene.Predator_Speed)
     scene.predator.flipX = true //  accurately make animal run away, flipping it appropriately
+
+    console.log(scene.startx,scene.starty)
 
     // score increases depending on type of predator scared away
     MovingText(scene, scene.ScoreIncrement, scene.torch_smoke)
@@ -653,6 +703,71 @@ export const TorchPredatorCollision = (scene,train) => {
 
 }
 
+export const PredatorAttackingPlayer = (scene,predatorObject,predatorAngle,PlayerAngle) => {
+
+    // If predator isn't stopped by the torch, it runs around in a circle and attacks the player
+
+    // var rotAngle = scene.physics.moveTo(scene.predator,scene.Player.x,scene.Player.y,scene.Predator_Speed)
+    // RotatePredatorToPlayer(scene,rotAngle,scene.predator,scene.Player)
+
+    ///////
+    // var graphics = scene.add.graphics()
+    //     .lineStyle(1, 0xffffff, 0.5);
+    // var path = new Phaser.Curves.Path(320, 320).circleTo(200);
+    //
+    // path.draw(graphics, 128);
+    //
+    // console.log(path)
+
+    // scene.predator = scene.add.follower(path,scene.predator.x,scene.predator.y,scene.predator.fileName).setScale()
+    // scene.predator.startFollow({
+    //     duration: 3000,
+    //     yoyo: true,
+    //     repeat: -1,
+    //     rotateToPath:false,
+    //     rotationOffset: 0
+    // });
+    let AngularDistance = (CircularDistance(scene,PlayerAngle,predatorAngle))
+    let sign = Math.sign(AngularDistance)
+    let stepNumber = Math.abs(AngularDistance)
+    let stepSize = AngularDistance/stepNumber
+    let theta = Phaser.Math.DegToRad(predatorAngle)
+
+    console.log(AngularDistance,sign,stepNumber,theta,Phaser.Math.DegToRad(PlayerAngle))
+
+    for(let i=0;i<stepNumber;i++){
+
+        theta = mod(theta + Phaser.Math.DegToRad((stepSize)),2*Math.PI)
+
+        let [new1,new2] = AngleToCoordinates(scene,theta,200)
+        let y = scene.sc_widt + new2;
+        let x = scene.sc_high + new1;
+
+        console.log(theta, x,y)
+
+
+        var rotAngle = scene.physics.moveTo(predatorObject,x,y,scene.Predator_Speed)
+        RotatePredatorToPlayer(scene,rotAngle,scene.predator,scene.Player)
+
+        setTimeout(function() {
+            console.log(i);
+        }, 2000 * i);
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+}
+
 export const TorchPredatorMarkers = (scene) => {
 // show where player placed torch on previous trial, also the location from where predator attacked
 
@@ -667,14 +782,17 @@ export const TorchPredatorMarkers = (scene) => {
 
 
         //predator marker would be at point of intersection between line from predator to player, and circle
-        let PredatorPlayerLine = new Phaser.Geom.Line(scene.Prev_predator_x,scene.Prev_predator_y,scene.Prev_Player_Finalx,scene.Prev_Player_Finaly)
+        // let PredatorPlayerLine = new Phaser.Geom.Line(scene.Prev_predator_x,scene.Prev_predator_y,scene.Prev_Player_Finalx,scene.Prev_Player_Finaly)
+
+        let PredatorPlayerLine = new Phaser.Geom.Line(scene.sc_widt,scene.sc_high,scene.Prev_predator_x,scene.Prev_predator_y)
         let circle =new Phaser.Geom.Circle(scene.sc_widt, scene.sc_high, scene.radius)
 
+        console.log(PredatorPlayerLine)
 
         var checkpoint,xi,yi
         checkpoint = Phaser.Geom.Intersects.GetLineToCircle(PredatorPlayerLine,circle) //find intersection between circle and line
 
-
+        console.log(checkpoint)
 
         xi = checkpoint[0].x
         yi= checkpoint[0].y
@@ -914,6 +1032,77 @@ export const saveData = (scene) =>  {
 
 export const mod = (n, m) => {
     return ((n % m) + m) % m;
+}
+
+export const movePredatorinCircularPath = (scene,predatorObject,theta,AngDistance) => {
+
+
+    console.log('Theta',theta)
+
+    let sign = Math.sign(AngDistance)
+
+    scene.torch_smoke.body.enable = false
+
+    console.log(sign, AngDistance)
+
+    // theta = mod(theta + (sign*0.015),2*Math.PI)
+    theta = mod(theta + (sign*0.020),2*Math.PI)
+
+
+    let [new1,new2] = AngleToCoordinates(scene,theta,270)
+
+
+    let x = scene.sc_widt + new2;
+    let y = scene.sc_high + new1;
+
+    // predatorObject.x = x
+    // predatorObject.y = y
+    console.log('Theta',theta, x, y)
+
+
+    var rotAngle = scene.physics.moveTo(predatorObject,y,x,scene.Predator_Speed)
+    RotatePredatorToPlayer(scene,rotAngle,scene.predator,scene.Player)
+
+    return theta
+
+    // scene.time.addEvent({
+    //     delay: 550,
+    //     callback: () => {
+    //         scene.torch_initiation = 0
+    //         scene.predator.destroy()
+    //
+    //         scene.scene.restart()
+    //
+    //
+    //     },
+    //     loop: false
+    // })
+}
+
+
+
+export const CircularDistance = (scene,angle1,angle2) => {
+    //calculates distance between 2 angles, alongwith the sign showing if angle1 is > or < angle2
+    //formula: shortest distance = PI - abs(PI - abs(angle1 - angle2))
+
+    var term1 = Phaser.Math.DegToRad(angle1) - Phaser.Math.DegToRad(angle2)
+    var sign_term1 = Math.sign(term1)
+    var term2 = Math.PI - Math.abs(term1)
+    var sign_term2 = Math.sign(term2)
+    var sign_overall = sign_term1*sign_term2
+
+    if (sign_overall != 0) {
+        var shortest_distance = sign_overall * Phaser.Math.RadToDeg(Math.PI - Math.abs(term2))
+    }
+
+    else if (sign_overall === 0){
+        var shortest_distance = Phaser.Math.RadToDeg(Math.PI - Math.abs(term2))
+    }
+
+
+
+    return shortest_distance
+
 }
 
 

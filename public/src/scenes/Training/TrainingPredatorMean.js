@@ -131,7 +131,7 @@ export default class TrainingPredatorMean extends Phaser.Scene {
         //Changepoint occurs after 5 trials
         StartLocationCommon(this,this.Predator_PredefinedMean[this.trialNum-1],this.sc_widt)
 
-        this.predator = this.physics.add.existing((new Panther(this, this.startx, this.starty, 'PantherRun')))
+        this.predator = this.physics.add.existing((new Panther(this, this.sc_widt, this.sc_high, 'PantherRun')))
         //this.predator.setFrame(0)
         //this.predator.visible = true   //its training phase so players see location from where predator arrives
         this.predator.scene.add.existing(this.predator)
@@ -181,8 +181,8 @@ export default class TrainingPredatorMean extends Phaser.Scene {
 
         const scoreVal = 0;
 
-        this.scoretext = this.make.text({x: 320,
-            y: 150,
+        this.scoretext = this.make.text({x: this.sc_widt,
+            y: this.sc_high - 200,
             text: scoreVal,
             origin: 0.5,
             style: {

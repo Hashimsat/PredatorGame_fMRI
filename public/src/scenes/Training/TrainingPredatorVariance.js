@@ -172,8 +172,8 @@ export default class TrainingPredatorVariance extends Phaser.Scene {
 
         const scoreVal = 0;
 
-        this.scoretext = this.make.text({x: 320,
-            y: 150,
+        this.scoretext = this.make.text({x: this.sc_widt,
+            y: this.sc_high - 200,
             text: scoreVal,
             origin: 0.5,
             style: {
