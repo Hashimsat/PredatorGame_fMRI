@@ -47,43 +47,48 @@ export const moveTorchOnCircle =(scene,gameobjectTorch,handle,smoke,PlayerObject
 
     // let [new1,new2] = AngleToCoordinates(scene,theta,scene.radius)
 
-    let [new1,new2] = AngleToCoordinates(scene,theta,150)
+    let [new1,new2] = AngleToCoordinates(scene,theta,120)
 
 
     gameobjectTorch.x = scene.sc_widt + new2;
     gameobjectTorch.y = scene.sc_high + new1;
 
-    //gameobjectTorch.body.updateFromGameObject()
-
-    handle.x = gameobjectTorch.x;
-    handle.y = gameobjectTorch.y;
-
     smoke.x = gameobjectTorch.x;
     smoke.y = gameobjectTorch.y;
 
+    //gameobjectTorch.body.updateFromGameObject()
+
+    [new1,new2] = AngleToCoordinates(scene,theta,150)
+
+    handle.x = scene.sc_widt + new2;
+    handle.y = scene.sc_high + new1;
 
 
-    // gameobjectTorch.setRotation(TorchAngle)
-    // handle.setRotation(TorchAngle);
-    // smoke.setRotation(TorchAngle)
+
+
+
+    gameobjectTorch.setRotation(TorchAngle)
+    handle.setRotation(TorchAngle);
+    smoke.setRotation(TorchAngle)
 
     let angCheck = TorchAngle
 
     // let angCheck = mod((-theta  - Math.PI),2*Math.PI)
 
-    gameobjectTorch.setRotation(angCheck)
+    // gameobjectTorch.setRotation(angCheck)
 
     console.log(angCheck,TorchAngle,theta)
 
     gameobjectTorch.flipY = true
-    handle.setRotation(angCheck-0.005);
-    // handle.flipY = true
-    smoke.setRotation(angCheck)
+    // handle.setRotation(angCheck-0.005);
+    handle.flipY = true
+    // smoke.setRotation(angCheck)
     smoke.flipY = true
 
 
 
     gameobjectTorch.setVisible(false)
+    smoke.setVisible(false)
     gameobjectTorch.body.enable = false
     handle.setVisible(true)         //make the handle and torch visible
     //turn torch on as soon as spacebar pressed
@@ -111,7 +116,7 @@ export const moveTorchOnCircle =(scene,gameobjectTorch,handle,smoke,PlayerObject
     //start moving player avatar with the torch when participants start moving torch
 
 
-    let [newPlayerX,newPlayerY] = AngleToCoordinates(scene,thetaPlayer,200)
+    let [newPlayerX,newPlayerY] = AngleToCoordinates(scene,thetaPlayer,220)
     //5 is radius of circle around which player moves
     PlayerObject.x = (scene.sc_widt) + newPlayerX;
     PlayerObject.y = (scene.sc_high) + newPlayerY;
@@ -125,8 +130,8 @@ export const moveTorchOnCircle =(scene,gameobjectTorch,handle,smoke,PlayerObject
     //
     moveCharacterAroundCircle(scene,theta,PlayerObject)
 
-    return [gameobjectTorch.x,gameobjectTorch.y,TorchAngle,TorchAngleCorrected]
-
+    // return [gameobjectTorch.x,gameobjectTorch.y,TorchAngle,TorchAngleCorrected]
+    return [handle.x,handle.y,TorchAngle,TorchAngleCorrected]
 
 }
 
@@ -479,7 +484,7 @@ export const PromptToPlaceTorch = (scene) => {
 
     var promptText = scene.make.text({x: scene.sc_widt,
         y: scene.sc_high - 260,
-        text: 'Please Choose Torch Location',
+        text: 'Please Choose Flame Location',
         origin: 0.5,
         style: {
             font: 'bold 15px Arial',
@@ -531,7 +536,7 @@ export const PromptToPlaceTorch = (scene) => {
 export const TrainingPromptToMoveTorch = (scene) => {
     var promptText = scene.make.text({x: scene.sc_widt,
         y: scene.sc_high - 230,
-        text: 'Please Activate Torch by'  + ' Clicking on Avatar'+ '\n'  + ' and Choose Torch Location by Clicking Again',  ///
+        text: 'Please Activate Flame by'  + ' Clicking on Avatar'+ '\n'  + ' and Choose Flame Location by Clicking Again',  ///
         origin: 0.5,
         style: {
             font: 'bold 15px Arial',
@@ -550,7 +555,7 @@ export const TrainingPromptToMoveTorch = (scene) => {
 export const PromptToTurnTorchOn = (scene) => {
     var promptText = scene.make.text({x: scene.sc_widt,
         y: scene.sc_high - 230,
-        text: 'Please Turn Torch Flame On by' +'\n' +' Clicking Left Mouse Button',
+        text: 'Please Turn Flame On by' +'\n' +' Clicking Left Mouse Button',
         origin: 0.5,
         style: {
             font: 'bold 15px Arial',
@@ -594,7 +599,9 @@ export const RotatePredatorToPlayer = (scene,rotAngle,PredatorObject,PlayerObjec
 
     // angle in radians
     //if (scene.predator.x > scene.Player.x)
-    if (PredatorObject.x > PlayerObject.x)
+
+    // if (PredatorObject.x > PlayerObject.x)
+    if (rotAngle < 180)
     {
         PredatorObject.setRotation(rotAngle)
         PredatorObject.flipY = true
@@ -825,7 +832,8 @@ export const PredatorPath = (scene) => {
 
     graphics.lineStyle(2, 0x00ff00, 1);
 
-    graphics.lineBetween(scene.startx,scene.starty,scene.Player.x,scene.Player.y);
+    // graphics.lineBetween(scene.startx,scene.starty,scene.Player.x,scene.Player.y);
+    graphics.lineBetween(scene.sc_widt,scene.sc_high,scene.Player.x,scene.Player.y);
 }
 
 export const ShowAllPredators = (scene,trialNo,PredatorArray,PredatorType,rad)=>{
@@ -845,17 +853,19 @@ export const ShowAllPredators = (scene,trialNo,PredatorArray,PredatorType,rad)=>
         // var newSY = Math.sin(AngleRad) * rad
         // var newSX = Math.cos(AngleRad) * rad
 
-        let [newSX,newSY] = AngleToCoordinates(scene,AngleRad,rad)
-
+        // let [newSX,newSY] = AngleToCoordinates(scene,AngleRad,rad)
+        let [newSX,newSY] = AngleToCoordinates(scene,AngleRad,25)
         TempPredLocX = scene.sc_widt + newSX
         TempPredLocY = scene.sc_high+ newSY
 
 
         let ShowPredators = ChoosePredator(scene,PredatorType[i],TempPredLocX,TempPredLocY)
+        // let ShowPredators = ChoosePredator(scene,PredatorType[i],scene.sc_widt,scene.sc_high)
         ShowPredators.scene.add.existing(ShowPredators)
         ShowPredators.setVisible(true)
 
-        var CurrentPredatorAngle = Phaser.Math.Angle.Between(ShowPredators.x, ShowPredators.y, scene.Player.x, scene.Player.y)
+        // var CurrentPredatorAngle = Phaser.Math.Angle.Between(ShowPredators.x, ShowPredators.y, scene.Player.x, scene.Player.y)
+        var CurrentPredatorAngle = AngleRad
         //this.predator.setRotation(CurrentPredatorAngle)
         RotatePredatorToPlayer(scene, CurrentPredatorAngle, ShowPredators, scene.Player)
 
@@ -1037,33 +1047,92 @@ export const mod = (n, m) => {
 export const movePredatorinCircularPath = (scene,predatorObject,theta,AngDistance) => {
 
 
-    console.log('Theta',theta)
 
-    let sign = Math.sign(AngDistance)
+    // scene.Player.body.enable = false
+    //
+    // let sign = Math.sign(AngDistance)
+    //
+    // scene.torch_smoke.body.enable = false
+    //
+    // // console.log(sign, AngDistance)
+    //
+    // // theta = mod(theta + (sign*0.015),2*Math.PI)
+    // theta = mod(theta + (sign*0.013),2*Math.PI)
+    //
+    //
+    // let [new1,new2] = AngleToCoordinates(scene,theta,220)
+    //
+    //
+    // let x = scene.sc_widt + new2;
+    // let y = scene.sc_high + new1;
+    //
+    // let rotAngle = Math.atan2(x - predatorObject.y, y - predatorObject.x)
+    //
+    // predatorObject.x = y
+    // predatorObject.y = x
+    //
+    // scene.predator.setRotation(rotAngle)
 
-    scene.torch_smoke.body.enable = false
 
-    console.log(sign, AngDistance)
+    scene.time.addEvent({
+        delay: 100,
+        callback: () => {
+            // scene.Player.body.enable = false
 
-    // theta = mod(theta + (sign*0.015),2*Math.PI)
-    theta = mod(theta + (sign*0.020),2*Math.PI)
+            let sign = Math.sign(AngDistance)
+
+            scene.torch_smoke.body.enable = false
+
+            // console.log(sign, AngDistance)
+
+            // theta = mod(theta + (sign*0.015),2*Math.PI)
+
+            console.log('Ang dist',AngDistance, scene.theta, scene.torchangle, Phaser.Math.RadToDeg(scene.theta))
+            scene.theta = mod(scene.theta + (sign*0.15),2*Math.PI)
 
 
-    let [new1,new2] = AngleToCoordinates(scene,theta,270)
+            let [new1,new2] = AngleToCoordinates(scene,scene.theta,220)
 
 
-    let x = scene.sc_widt + new2;
-    let y = scene.sc_high + new1;
+            scene.target.y = scene.sc_widt + new2;
+            scene.target.x = scene.sc_high + new1;
 
-    // predatorObject.x = x
-    // predatorObject.y = y
-    console.log('Theta',theta, x, y)
+            // let rotAngle = Math.atan2(x - predatorObject.y, y - predatorObject.x)
+
+            // predatorObject.x = y
+            // predatorObject.y = x
+            var rotAngle = scene.physics.moveTo(predatorObject,scene.target.x,scene.target.y,scene.Predator_Speed)
+
+            console.log(scene.target,scene.Predator_Speed)
 
 
-    var rotAngle = scene.physics.moveTo(predatorObject,y,x,scene.Predator_Speed)
-    RotatePredatorToPlayer(scene,rotAngle,scene.predator,scene.Player)
+            RotatePredatorToPlayer(scene,rotAngle,scene.predator,scene.Player)
 
-    return theta
+
+
+            console.log('Theta',scene.theta)
+            console.log('Rot angle', rotAngle)
+
+
+
+            // scene.predator.rotation = (rotAngle)
+
+
+        },
+        loop: true
+    })
+    // console.log('Theta',theta, x, y)
+
+
+    // var rotAngle = scene.physics.moveTo(predatorObject,y,x,scene.Predator_Speed)
+
+
+
+    // console.log('Theta',theta)
+    // console.log('Rot angle', rotAngle)
+    // RotatePredatorToPlayer(scene,rotAngle,scene.predator,scene.Player)
+
+    // return theta
 
     // scene.time.addEvent({
     //     delay: 550,
@@ -1077,6 +1146,10 @@ export const movePredatorinCircularPath = (scene,predatorObject,theta,AngDistanc
     //     },
     //     loop: false
     // })
+}
+
+export const PredatorDistributionAroundCenter = (scene,angle,rad) => {
+
 }
 
 

@@ -12,11 +12,17 @@ import {
     TorchPredatorCollision,
     ShowAllPredators,
     TorchPredatorMarkers,
-    ChoosePredator, PromptToPlaceTorch, PredatorWarning, PredatorArrival,
+    ChoosePredator,
+    PromptToPlaceTorch,
+    PredatorWarning,
+    PredatorArrival,
+    CircularDistance,
+    movePredatorinCircularPath,
+    AngleToCoordinates,
 } from "../../Functions/GameFunctions.js";
 
 
-import {InitializeGameObjects} from "../../Functions/GameUtils.js";
+import {InitializeGameObjects, preloadInit} from "../../Functions/GameUtils.js";
 
 export default class TrainingDifferentPredators extends Phaser.Scene {
 
@@ -71,14 +77,21 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
     Prev_predator_x
     Prev_predator_y
     Prev_predator_angle
-    Prev_Player_Finalx
-    Prev_Player_Finaly
+    Prev_Player_Finalx = 320+175
+    Prev_Player_Finaly = 320
 
     // Prompt text var
     Prompt; PredatorText
 
     //Additional Predator Variables
     PredType
+
+    //variables for zone, so cheetah circles around if torch is not in correct position
+    zone
+    zone_collider = 0  // variable that allows the leaving zone function to run only once
+    theta
+    AngularDistance
+    target = new Phaser.Math.Vector2();
 
 
 
@@ -102,6 +115,12 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
         super('TrainingDifferentPreds')
     }
 
+
+    preload(){
+        preloadInit(this,this.trialNum)
+    }
+
+
     create() {
         let CurrentPredatorAngle
         let circle
@@ -111,6 +130,7 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
 
         //initialize data variables
         this.torchMovement = 0 //torch not moved initially
+        this.zone_collider = 0
 
         //training trial number
         this.trialNum = this.trialNum + 1
@@ -126,6 +146,7 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
         //Changepoint occurs after 5 trials
 
         StartLocationCommon(this,this.Predator_PredefinedMean[this.trialNum-1],this.sc_widt)
+        this.theta = Phaser.Math.DegToRad(this.Predator_PredefinedMean[this.trialNum-1])
 
 
         //Select a predator randomly from the 3 options available
@@ -133,12 +154,14 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
 
 
         this.PredType = this.Predator_PredefinedTypes[this.trialNum-1]   //chosen fromPredefined_PredatorType
-        this.predator = ChoosePredator(this,this.PredType,this.startx,this.starty)
+        this.predator = ChoosePredator(this,this.PredType,this.sc_widt,this.sc_high)
         StartDelayTrain(this,this.predator,this.train,this.trialNum,this.Predator_ActualMean,this.Predator_PredefinedMean,this.Predator_PredefinedTypes)   //add delay before game fully starts
 
 
         this.predator.scene.add.existing(this.predator)
-        CurrentPredatorAngle = Phaser.Math.Angle.Between(this.startx,this.starty,this.Player.x,this.Player.y)
+
+        let [newSX,newSY] = AngleToCoordinates(this,this.theta,25)
+        CurrentPredatorAngle = Phaser.Math.Angle.Between(this.sc_widt+newSX,this.sc_high+newSY,this.startx,this.starty)
         //this.predator.setRotation(CurrentPredatorAngle)
         RotatePredatorToPlayer(this,CurrentPredatorAngle,this.predator,this.Player)
         //RotatePredatorToPlayer(scene,)
@@ -177,6 +200,20 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
             TorchPredatorCollision(this,this.train)
 
         })
+
+////////////
+        this.zone = this.add.zone(120, 120).setOrigin(0.5,0.5)
+        this.physics.world.enable(this.zone, 0); // (0) DYNAMIC (1) STATIC
+        this.zone.body.setAllowGravity(false);
+        this.zone.body.moves = false;
+        this.zone.body.setCircle(200);
+
+        console.log(this.zone)
+
+        this.physics.add.overlap(this.predator, this.zone);
+
+        this.zone.on('enterzone', () => console.log('enterzone'));
+        this.zone.on('leavezone', () => console.log('leavezone'));
 
         const scoreVal = 0;
 
@@ -282,6 +319,44 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
         if (this.escape.isDown){
             this.Discontinue = 1;
             this.scene.start('premature-end',{score: this.score, trialNumbers: this.trialNum, Discontinued: this.Discontinue,train:this.train})
+        }
+
+
+
+
+
+        ///////////
+        var touching = this.zone.body.touching;
+        var wasTouching = this.zone.body.wasTouching;
+
+        if (touching.none && !wasTouching.none  && this.zone_collider == 0) {
+            this.zone.emit('leavezone');
+            this.zone_collider = 1
+            console.log(this.torchangle,this,this.theta)
+            this.AngularDistance = (CircularDistance(this,this.torchangle,this.Predator_PredefinedMean[this.trialNum-1]))
+
+            movePredatorinCircularPath(this,this.predator,this.theta,this.AngularDistance)
+
+            // PredatorAttackingPlayer(this,this.predator,this.PredAngle,this.torchangle)
+            // this.physics.moveTo(this.predator,this.Player.x,this.Player.y,this.predator.speedo)
+            this.physics.world.disable(this.zone)
+
+        }
+        else if (!touching.none && wasTouching.none) {
+            this.zone.emit('enterzone');
+
+        }
+
+
+
+        this.zone.body.debugBodyColor = this.zone.body.touching.none ? 0x00ffff : 0xffff00;
+
+
+        var distance = Phaser.Math.Distance.Between(this.predator.x, this.predator.y, this.target.x, this.target.y);
+
+        if (distance < 4)
+        {
+            this.predator.body.reset(this.target.x, this.target.y);  // Stop predator once it reaches target (the new position as it moves in circle)
         }
 
 

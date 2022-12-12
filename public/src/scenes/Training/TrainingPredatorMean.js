@@ -10,7 +10,12 @@ import {
     PlayerPredatorCollision,
     TorchPredatorCollision,
     TorchPredatorMarkers,
-    OptimalTorchLocationMarker, PromptToPlaceTorch, PredatorWarning, PredatorArrival,
+    OptimalTorchLocationMarker,
+    PromptToPlaceTorch,
+    PredatorWarning,
+    PredatorArrival,
+    CircularDistance,
+    movePredatorinCircularPath,
 } from "../../Functions/GameFunctions.js";
 
 import {InitializeGameObjects,preloadInit} from "../../Functions/GameUtils.js";
@@ -71,14 +76,22 @@ export default class TrainingPredatorMean extends Phaser.Scene {
     Prev_predator_x
     Prev_predator_y
     Prev_predator_angle
-    Prev_Player_Finalx
-    Prev_Player_Finaly
+    Prev_Player_Finalx = 320+175
+    Prev_Player_Finaly = 320
 
     // Prompt text var
     Prompt; PredatorText
 
     // Additional Predator Variables
     PredType
+
+    //variables for zone, so cheetah circles around if torch is not in correct position
+    zone
+    zone_collider = 0  // variable that allows the leaving zone function to run only once
+    theta
+    AngularDistance
+    target = new Phaser.Math.Vector2();
+
 
 
     /** @type {Phaser.Physics.Arcade.Sprite} */
@@ -107,12 +120,15 @@ export default class TrainingPredatorMean extends Phaser.Scene {
     
 
     create() {
+
+
         let CurrentPredatorAngle
         let circle
         RunAnimation(this)    //preload all animations
 
         //initialize data variables
         this.torchMovement = 0 //torch not moved initially
+        this.zone_collider = 0
 
 
 
@@ -130,14 +146,20 @@ export default class TrainingPredatorMean extends Phaser.Scene {
         //Predator only appears from a single fixed direction (mean of normal distribution)
         //Changepoint occurs after 5 trials
         StartLocationCommon(this,this.Predator_PredefinedMean[this.trialNum-1],this.sc_widt)
+        this.theta = Phaser.Math.DegToRad(this.Predator_PredefinedMean[this.trialNum-1])
 
         this.predator = this.physics.add.existing((new Panther(this, this.sc_widt, this.sc_high, 'PantherRun')))
         //this.predator.setFrame(0)
         //this.predator.visible = true   //its training phase so players see location from where predator arrives
         this.predator.scene.add.existing(this.predator)
-        CurrentPredatorAngle = Phaser.Math.Angle.Between(this.startx,this.starty,this.Player.x,this.Player.y)
+        // CurrentPredatorAngle = Phaser.Math.Angle.Between(this.startx,this.starty,this.Player.x,this.Player.y)
+
+        CurrentPredatorAngle = Phaser.Math.Angle.Between(this.sc_widt,this.sc_high,this.startx,this.starty)
+
         //this.predator.setRotation(CurrentPredatorAngle)
         RotatePredatorToPlayer(this,CurrentPredatorAngle,this.predator,this.Player)
+
+        // this.predator.flipY = true
 
         //Preinitialize Predator type
 
@@ -178,6 +200,21 @@ export default class TrainingPredatorMean extends Phaser.Scene {
             TorchPredatorCollision(this,this.train)
 
         })
+
+        ///////////////////////
+        this.zone = this.add.zone(120, 120).setOrigin(0.5,0.5)
+        this.physics.world.enable(this.zone, 0); // (0) DYNAMIC (1) STATIC
+        this.zone.body.setAllowGravity(false);
+        this.zone.body.moves = false;
+        this.zone.body.setCircle(200);
+
+        console.log(this.zone)
+
+        this.physics.add.overlap(this.predator, this.zone);
+
+        this.zone.on('enterzone', () => console.log('enterzone'));
+        this.zone.on('leavezone', () => console.log('leavezone'));
+
 
         const scoreVal = 0;
 
@@ -286,6 +323,40 @@ export default class TrainingPredatorMean extends Phaser.Scene {
             this.Discontinue = 1;
             this.scene.start('premature-end',{score: this.score, trialNumbers: this.trialNum, Discontinued: this.Discontinue,train:this.train})
         }
+
+
+        ///////////
+        var touching = this.zone.body.touching;
+        var wasTouching = this.zone.body.wasTouching;
+
+        if (touching.none && !wasTouching.none  && this.zone_collider == 0) {
+            this.zone.emit('leavezone');
+            this.zone_collider = 1
+
+            this.AngularDistance = (CircularDistance(this,this.torchangle,this.Predator_PredefinedMean[this.trialNum-1]))
+
+            movePredatorinCircularPath(this,this.predator,this.theta,this.AngularDistance)
+
+            // PredatorAttackingPlayer(this,this.predator,this.PredAngle,this.torchangle)
+            // this.physics.moveTo(this.predator,this.Player.x,this.Player.y,this.predator.speedo)
+            this.physics.world.disable(this.zone)
+
+        }
+        else if (!touching.none && wasTouching.none) {
+            this.zone.emit('enterzone');
+
+        }
+
+
+        this.zone.body.debugBodyColor = this.zone.body.touching.none ? 0x00ffff : 0xffff00;
+
+        var distance = Phaser.Math.Distance.Between(this.predator.x, this.predator.y, this.target.x, this.target.y);
+
+        if (distance < 4)
+        {
+            this.predator.body.reset(this.target.x, this.target.y);  // Stop predator once it reaches target (the new position as it moves in circle)
+        }
+
 
 
 

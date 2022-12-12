@@ -36,28 +36,31 @@ export const InitializeGameObjects = (scene) => {
 
 
 
-    scene.torch_smoke = scene.physics.add.sprite(scene.sc_widt+200,scene.sc_high+200,'torch_smoke').setInteractive().setImmovable(true)
+    scene.torch_smoke = scene.physics.add.sprite(scene.sc_widt+150,scene.sc_high+150,'torch_smoke').setInteractive().setImmovable(true)
     scene.torch_smoke.setVisible(false)
     scene.torch_smoke.setScale(scene.MinimumFlameSize+scene.MinimumFlameSize/2);
     // scene.torch_smoke.setScale(0.68)
-    scene.torch_smoke.setOrigin(0.6, 0.2)
+    // scene.torch_smoke.setOrigin(0.6, 0.2)
+    scene.torch_smoke.setOrigin(0.5, 0.5)
     scene.torch_smoke.play('smoke')
 
-    scene.torch_smoke.body.setCircle(100,10,-70)
+    scene.torch_smoke.body.setCircle(100,0,0)
     scene.torch_smoke.body.enable = false
+    scene.torch_smoke.body.updateFromGameObject()
 
 
-    scene.Torch= scene.physics.add.sprite(scene.sc_widt+200, scene.sc_high+200, 'torch').setInteractive().setImmovable(true)
+    scene.Torch= scene.physics.add.sprite(scene.sc_widt+150, scene.sc_high+150, 'torch').setInteractive().setImmovable(true)
     scene.Torch.setVisible(false)
     scene.Torch.setScale(scene.MinimumFlameSize);
+    scene.Torch.setOrigin(0.5, 0.5)
     //scene.Torch.setScale(0.32)
     // scene.Torch.setOrigin(1, 0.75)
-    scene.Torch.setOrigin(0.6,0.2)
+    // scene.Torch.setOrigin(0.6,0.2)
 
     scene.Torch.play('torch')   //flame animation
     // put a circular body around torch, centered correctly
 
-    scene.Torch.body.setCircle(100,10,167)
+    scene.Torch.body.setCircle(100,0,0)
     scene.Torch.body.debugShowBody = false;
 
     // var body =scene.Torch.body
@@ -78,7 +81,8 @@ export const InitializeGameObjects = (scene) => {
     scene.torch_handle = scene.physics.add.sprite(scene.sc_widt+200,scene.sc_high+200,'torch-handle').setScale(0.18,0.15)
     scene.torch_handle.body.debugShowBody = false;
     scene.torch_handle.setVisible(false)
-    scene.torch_handle.setOrigin(1.05,1.05) //0.3,-0.1
+    scene.torch_handle.setOrigin(0.5,0.5)
+    // scene.torch_handle.setOrigin(1.05,1.05) //0.3,-0.1
 
 
 
@@ -116,7 +120,9 @@ export const preloadInit = (scene,trialnum) =>{
 
     //torch and handle
     scene.load.spritesheet('torch', 'assets/torch_spritesheet2.png', {frameWidth: 220, frameHeight: 355})
-    scene.load.image('torch-handle','assets/torch_handle.png')
+    // scene.load.image('torch-handle','assets/torch_handle.png')
+    scene.load.image('torch-handle','assets/Campwood_NoBG.png')
+
     scene.load.spritesheet('torch_smoke', 'assets/smoke_bgremoved2.png', {frameWidth: 240, frameHeight: 240})
 
 

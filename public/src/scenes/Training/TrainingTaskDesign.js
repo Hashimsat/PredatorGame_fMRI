@@ -65,8 +65,8 @@ export default class TrainingGameDesign extends Phaser.Scene {
     Prev_predator_x
     Prev_predator_y
     Prev_predator_angle
-    Prev_Player_Finalx
-    Prev_Player_Finaly
+    Prev_Player_Finalx = 320+175
+    Prev_Player_Finaly = 320
 
     // Prompt text var
     Prompt; PredatorText; TorchonPrompt

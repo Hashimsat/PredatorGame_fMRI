@@ -66,11 +66,11 @@ let config = {
     },
     autoRound: false,
 
-    // CheckHeadphone,
-    scene:[ChooseAvatar,MenuScene,
-        StartingInstructions,FirstPracticeInstructions,SecondPracticeInstructions,ThirdPracticeInstructions,FinalPracticeInstructions,TrainingGameDesign,
-        TrainingPredatorMean,TrainingPredatorVariance,TrainingDifferentPredators,TrainingLast,PromptToStartGame,
-        GameScene,GameOver,PrematureEnding, FailedSoundCheckEnding],
+    // CheckHeadphone, //After menu: StartingInstructions,FirstPracticeInstructions,SecondPracticeInstructions,ThirdPracticeInstructions,FinalPracticeInstructions,TrainingGameDesign,
+    //         TrainingPredatorMean
+    scene:[ChooseAvatar,MenuScene, StartingInstructions,FirstPracticeInstructions,SecondPracticeInstructions,ThirdPracticeInstructions,FinalPracticeInstructions,TrainingGameDesign,
+            TrainingPredatorMean ,TrainingPredatorVariance,TrainingDifferentPredators,TrainingLast,PromptToStartGame,
+            GameScene,GameOver,PrematureEnding, FailedSoundCheckEnding],
     physics: {
         default: 'arcade',
         arcade: {

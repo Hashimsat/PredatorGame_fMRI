@@ -116,6 +116,7 @@ export default class GameScene extends Phaser.Scene {
     zone_collider = 0  // variable that allows the leaving zone function to run only once
     theta
     AngularDistance
+    target = new Phaser.Math.Vector2();
 
 
 
@@ -412,6 +413,8 @@ export default class GameScene extends Phaser.Scene {
 
             this.AngularDistance = (CircularDistance(this,this.torchangle,this.PredAngle))
 
+            movePredatorinCircularPath(this,this.predator,this.theta,this.AngularDistance)
+
             // PredatorAttackingPlayer(this,this.predator,this.PredAngle,this.torchangle)
             // this.physics.moveTo(this.predator,this.Player.x,this.Player.y,this.predator.speedo)
             this.physics.world.disable(this.zone)
@@ -422,11 +425,21 @@ export default class GameScene extends Phaser.Scene {
 
         }
 
-        if (this.zone_collider == 1){
-            this.theta = movePredatorinCircularPath(this,this.predator,this.theta,this.AngularDistance)
-        }
+        // if (this.zone_collider == 1){
+        //     this.theta = movePredatorinCircularPath(this,this.predator,this.theta,this.AngularDistance)
+        // }
 
         this.zone.body.debugBodyColor = this.zone.body.touching.none ? 0x00ffff : 0xffff00;
+
+
+        var distance = Phaser.Math.Distance.Between(this.predator.x, this.predator.y, this.target.x, this.target.y);
+
+        if (distance < 4)
+        {
+            this.predator.body.reset(this.target.x, this.target.y);  // Stop predator once it reaches target (the new position as it moves in circle)
+        }
+
+
 
 
 
