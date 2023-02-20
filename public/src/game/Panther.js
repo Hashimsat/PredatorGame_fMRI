@@ -14,11 +14,11 @@ export default class Panther extends Phaser.Physics.Arcade.Sprite
     {
         super(scene, x, y, texture)
         //this.scene.physics.add.sprite(x, y, 'texture');
-        this.setScale(0.25)
+        this.setScale(0.22)
         this.speedo = 100
-        this.AttackTime = 5000
-        this.SpeedType = '(Slow)'
-        this.PointsPossible = '(50)'
+        this.AttackTime = 5500
+        this.SpeedType = '(Slow Speed)'
+        this.PointsPossible = '(55)'
 
 
         this.visible = false

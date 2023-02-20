@@ -17,6 +17,11 @@ import PromptToStartGame from "./scenes/Instructions/PromptToStartGame.js";
 import PrematureEnding from "./scenes/PrematureEnding.js";
 import CheckHeadphone from "./scenes/CheckHeadphone.js";
 import FailedSoundCheckEnding from "./scenes/FailedSoundCheckEnding.js";
+import VideoTraining from "./scenes/Training/VideoTraining.js";
+import AfterVideoInstruction from "./scenes/Instructions/AfterVideoInstruction.js";
+import WelcomeInstructions from "./scenes/Instructions/WelcomeInstructions.js";
+import InitialVideo from "./scenes/Training/InitialVideo.js";
+import CreateVideoForTraining from "./scenes/Training/CreateVideoForTraining.js";
 
 
 
@@ -68,8 +73,8 @@ let config = {
 
     // CheckHeadphone, //After menu: StartingInstructions,FirstPracticeInstructions,SecondPracticeInstructions,ThirdPracticeInstructions,FinalPracticeInstructions,TrainingGameDesign,
     //         TrainingPredatorMean
-    scene:[ChooseAvatar,MenuScene, StartingInstructions,FirstPracticeInstructions,SecondPracticeInstructions,ThirdPracticeInstructions,FinalPracticeInstructions,TrainingGameDesign,
-            TrainingPredatorMean ,TrainingPredatorVariance,TrainingDifferentPredators,TrainingLast,PromptToStartGame,
+    scene:[ChooseAvatar,MenuScene,WelcomeInstructions,CreateVideoForTraining, StartingInstructions,FirstPracticeInstructions,SecondPracticeInstructions,AfterVideoInstruction,ThirdPracticeInstructions,FinalPracticeInstructions,TrainingGameDesign,
+            TrainingPredatorMean ,TrainingPredatorVariance,InitialVideo,VideoTraining,TrainingDifferentPredators,TrainingLast,PromptToStartGame,
             GameScene,GameOver,PrematureEnding, FailedSoundCheckEnding],
     physics: {
         default: 'arcade',
@@ -157,7 +162,7 @@ var check_consent = function (elem) {
         // variables that will be used to store data in firebase firestore
         game.dataKeys = ['Totalscore', 'trialNumber', 'PredatorType', 'PredatorName', 'Predator_x', 'Predator_y',
             'PredatorAngle', 'PredatorMean', 'PredatorStd', 'PredatorSpeed','torchMoved' ,'torchON', 'torch_x', 'torch_y',
-            'torchAngle', 'torchSize', 'RTInitiation', 'RTConfirmation','RTTorchON', 'PredictionError', 'HitMiss', 'ChangePoint',
+            'torchAngle','playerAngle', 'torchSize', 'RTInitiation', 'RTConfirmation','RTTorchON', 'PredictionError', 'HitMiss', 'ChangePoint',
             'PredatorAttackTime','LivesLeft','HeadPhoneCheckPassFail', 'HeadPhoneCheckScore', 'HeadPhonePassThreshold'];
 
 
@@ -257,7 +262,7 @@ document.getElementById('consent').innerHTML = "        <p><b>Who is conducting 
     "        <p>    You will receive" +
 
     "            at least €8 per hour for helping us through this research.  You will also be \n " +
-    "        given added bonus of 50 cents for each block in which you score greater than 1000 points. This bonus would be reimbursed after  \n"  +
+    "        given added bonus of 50 cents for each block in which you score greater than 1200 points. This bonus would be reimbursed after  \n"  +
     "        we have reviewed your data and might take a few days.\n"  +
 
 

@@ -17,7 +17,7 @@ export default class PromptToStartGame extends Phaser.Scene {
 
         var PromptText = this.add.text(width * 0.5, height * 0.2,'Training Ended!',{fontSize: 30,align: 'center'}).setOrigin(0.5)
 
-        this.add.text(width * 0.5, height * 0.5,'Time to wander out in the jungle'+ '\nand get some water',{fontSize: 30,align: 'center'})
+        this.add.text(width * 0.5, height * 0.5,'Time to wander out in the jungle'+ '\nand get some gold',{fontSize: 30,align: 'center'})
             .setOrigin(0.5);
 
         const StartButton= this.add.text(500, 550, 'Start', { fill: '#0f0' });

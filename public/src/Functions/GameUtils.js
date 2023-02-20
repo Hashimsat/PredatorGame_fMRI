@@ -14,7 +14,7 @@ export const InitializeGameObjects = (scene) => {
 
 
     //Player refers to persons` character here
-    scene.Player = scene.physics.add.sprite(scene.Prev_Player_Finalx, scene.Prev_Player_Finaly, 'character').setScale(0.13,0.13).setImmovable().setInteractive();
+    scene.Player = scene.physics.add.sprite(scene.Prev_Player_Finalx, scene.Prev_Player_Finaly, 'character').setScale(0.12,0.12).setImmovable().setInteractive();
 
     scene.Player.setFrame(0)
     scene.Player.body.updateFromGameObject()
@@ -36,7 +36,7 @@ export const InitializeGameObjects = (scene) => {
 
 
 
-    scene.torch_smoke = scene.physics.add.sprite(scene.sc_widt+150,scene.sc_high+150,'torch_smoke').setInteractive().setImmovable(true)
+    scene.torch_smoke = scene.physics.add.sprite(scene.Prev_torch_x,scene.Prev_torch_y,'torch_smoke').setInteractive().setImmovable(true)
     scene.torch_smoke.setVisible(false)
     scene.torch_smoke.setScale(scene.MinimumFlameSize+scene.MinimumFlameSize/2);
     // scene.torch_smoke.setScale(0.68)
@@ -44,12 +44,12 @@ export const InitializeGameObjects = (scene) => {
     scene.torch_smoke.setOrigin(0.5, 0.5)
     scene.torch_smoke.play('smoke')
 
-    scene.torch_smoke.body.setCircle(100,0,0)
+    scene.torch_smoke.body.setCircle(100,15,20)
     scene.torch_smoke.body.enable = false
     scene.torch_smoke.body.updateFromGameObject()
 
 
-    scene.Torch= scene.physics.add.sprite(scene.sc_widt+150, scene.sc_high+150, 'torch').setInteractive().setImmovable(true)
+    scene.Torch= scene.physics.add.sprite(scene.Prev_torch_x, scene.Prev_torch_y, 'torch').setInteractive().setImmovable(true)
     scene.Torch.setVisible(false)
     scene.Torch.setScale(scene.MinimumFlameSize);
     scene.Torch.setOrigin(0.5, 0.5)
@@ -78,11 +78,20 @@ export const InitializeGameObjects = (scene) => {
 
 
 
-    scene.torch_handle = scene.physics.add.sprite(scene.sc_widt+200,scene.sc_high+200,'torch-handle').setScale(0.18,0.15)
+    scene.torch_handle = scene.physics.add.sprite(scene.Prev_torch_x+(Math.sign(scene.Prev_torch_x)*30),scene.Prev_torch_y,'torch-handle').setScale(0.18,0.15)
     scene.torch_handle.body.debugShowBody = false;
     scene.torch_handle.setVisible(false)
     scene.torch_handle.setOrigin(0.5,0.5)
     // scene.torch_handle.setOrigin(1.05,1.05) //0.3,-0.1
+
+    scene.Torch.setRotation(scene.Prev_torch_angle)
+    scene.torch_handle.setRotation(scene.Prev_torch_angle);
+    scene.torch_smoke.setRotation(scene.Prev_torch_angle)
+    scene.Torch.flipY = true
+    // handle.setRotation(angCheck-0.005);
+    scene.torch_handle.flipY = true
+    // smoke.setRotation(angCheck)
+    scene.torch_smoke.flipY = true
 
 
 
@@ -118,12 +127,16 @@ export const preloadInit = (scene,trialnum) =>{
     scene.load.spritesheet('PantherRun', 'assets/Panther_Spritesheet.png', {frameWidth: 600, frameHeight: 330})
     scene.load.spritesheet('SnowRun', 'assets/Snow_Spritesheet.png', {frameWidth: 610, frameHeight: 330})
 
+    scene.load.spritesheet('NeutralRun', 'assets/Neutral_Spritesheet.png', {frameWidth: 600, frameHeight: 330})
+
     //torch and handle
     scene.load.spritesheet('torch', 'assets/torch_spritesheet2.png', {frameWidth: 220, frameHeight: 355})
     // scene.load.image('torch-handle','assets/torch_handle.png')
     scene.load.image('torch-handle','assets/Campwood_NoBG.png')
 
     scene.load.spritesheet('torch_smoke', 'assets/smoke_bgremoved2.png', {frameWidth: 240, frameHeight: 240})
+
+
 
 
 

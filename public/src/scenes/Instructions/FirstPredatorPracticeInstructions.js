@@ -2,7 +2,7 @@ import Phaser from '../../lib/phaser.js'
 
 export default class FirstPracticeInstructions extends Phaser.Scene {
 
-    NextCount = 5;  //By default first slide of instructions shown
+    NextCount = 6;  //By default first slide of instructions shown
     SlideName
 
     init(data) {
@@ -17,9 +17,10 @@ export default class FirstPracticeInstructions extends Phaser.Scene {
 
     preload() {
 
-        this.load.image('Slide5','assets/Resize5.png')
+
         this.load.image('Slide6','assets/Resize6.png')
         this.load.image('Slide7','assets/Resize7.png')
+        this.load.image('Slide8','assets/Resize8.png')
 
     }
 
@@ -30,20 +31,20 @@ export default class FirstPracticeInstructions extends Phaser.Scene {
         const sc_high = this.scale.height / 2
 
         // console.log('Width and height are',sc_widt,sc_high)
-        var Instruct1 = this.add.image(sc_widt,sc_high,'Slide5')
+        var Instruct1 = this.add.image(sc_widt,sc_high,'Slide6')
 
-        if (this.NextCount > 5 && this.NextCount<8){
+        if (this.NextCount > 6 && this.NextCount<9){
             Instruct1.destroy()     //default slide is destroyed and we move to next slide
             var Instruct = this.add.image(sc_widt,sc_high,`${this.SlideName}`)
         }
         //if this.Next = 0, it means player wants to get to Menu
-        if(this.NextCount === 4){
-            this.NextCount = 5
+        if(this.NextCount === 5){
+            this.NextCount = 6
             this.scene.start('StartingInstruct',{ playerImageKey: this.playerImage,reload:1})
         }
 
-        if(this.NextCount===8){
-            this.NextCount = 5
+        if(this.NextCount===9){
+            this.NextCount = 6
             this.scene.start('TrainingPredatorMean',{ playerImageKey: this.playerImage})  //Start Training after 6th Next
         }
 

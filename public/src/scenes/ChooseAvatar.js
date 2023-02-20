@@ -53,7 +53,7 @@ export default class ChooseAvatar extends Phaser.Scene {
 
         const Boy = this.add.sprite( width/2 + 100, height/2 + 80, 'Check')
             .setInteractive().setScale(0.4)
-            .on('pointerdown', () => this.scene.start('StartingInstruct', { playerImageKey: 'Check.png' }));
+            .on('pointerdown', () => this.scene.start('Menu', { playerImageKey: 'Check.png' }));
         Boy.setFrame(0)
     }
 

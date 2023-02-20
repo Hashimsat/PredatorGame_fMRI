@@ -77,7 +77,7 @@ export const moveTorchOnCircle =(scene,gameobjectTorch,handle,smoke,PlayerObject
 
     // gameobjectTorch.setRotation(angCheck)
 
-    console.log(angCheck,TorchAngle,theta)
+
 
     gameobjectTorch.flipY = true
     // handle.setRotation(angCheck-0.005);
@@ -87,11 +87,12 @@ export const moveTorchOnCircle =(scene,gameobjectTorch,handle,smoke,PlayerObject
 
 
 
-    gameobjectTorch.setVisible(false)
-    smoke.setVisible(false)
+    // gameobjectTorch.setVisible(true)
+    // smoke.setVisible(true)
     gameobjectTorch.body.enable = false
-    handle.setVisible(true)         //make the handle and torch visible
-    //turn torch on as soon as spacebar pressed
+    // smoke.body.enable = true
+    // handle.setVisible(true)         //make the handle and torch visible
+
 
     //torch angle data
 
@@ -116,7 +117,7 @@ export const moveTorchOnCircle =(scene,gameobjectTorch,handle,smoke,PlayerObject
     //start moving player avatar with the torch when participants start moving torch
 
 
-    let [newPlayerX,newPlayerY] = AngleToCoordinates(scene,thetaPlayer,220)
+    let [newPlayerX,newPlayerY] = AngleToCoordinates(scene,thetaPlayer,205)
     //5 is radius of circle around which player moves
     PlayerObject.x = (scene.sc_widt) + newPlayerX;
     PlayerObject.y = (scene.sc_high) + newPlayerY;
@@ -144,7 +145,7 @@ export const moveCharacterAroundCircle = (scene,Angle,PlayerObject) => {
     let AngleDeg = Phaser.Math.RadToDeg(Angle)
     var FrameNumber
 
-    console.log(AngleDeg)
+    // console.log(AngleDeg)
 
     //Angle is 0 at South (270 deg). Angle is 180 at North. 180 to 0 from North to South through east, 0 to -180 from South to
     // North through west. Overall range from -180 to 180
@@ -190,7 +191,7 @@ export const moveCharacterAroundCircle = (scene,Angle,PlayerObject) => {
         PlayerObject.setFrame(FrameNumber)
 
 
-        console.log('FrameNum',FrameNumber)
+        // console.log('FrameNum',FrameNumber)
     }
 
 }
@@ -240,6 +241,13 @@ export const RunAnimation =(scene) => {
         key: 'SnowyRunner',
         frames: scene.anims.generateFrameNumbers('SnowRun', {frames: [0, 1, 2, 3, 4, 5, 6]}),
         frameRate: (scene.Predator_Speed/10),
+        repeat: -1
+    });
+
+    scene.anims.create({
+        key: 'NeutralRunner',
+        frames: scene.anims.generateFrameNumbers('NeutralRun', {frames: [0, 1, 2, 3, 4, 5, 6]}),
+        frameRate: (scene.Predator_Speed/19),   //just an approximate empirical number
         repeat: -1
     });
 
@@ -295,11 +303,11 @@ export const StartDelayTest = (scene,predatorObject,train) => {  //texture = thi
     //after this delay, every predator has its own delay added (in PredatorArrival)
 
     scene.time.addEvent({
-        delay: 2050,
+        delay: 1900,
         callback: () => {
-            PromptToPlaceTorch(scene)
-            //PredatorWarning(scene,predatorObject.ActualName)
-            //PredatorArrival(scene,predatorObject,train)
+            // PromptToPlaceTorch(scene)
+            PredatorWarning(scene,predatorObject.ActualName)
+            PredatorArrival(scene,predatorObject,train)
         },
         loop: false
     });
@@ -311,17 +319,22 @@ export const StartDelayTrain = (scene,predatorObject,train,trialNum,ActualMean,P
     //after this delay, every predator has its own delay added (in PredatorArrival)
 
     scene.time.addEvent({
-        delay: 10, //2050
+        delay: 1900, //2050
         callback: () => {
             // PredatorWarning(scene,predatorObject.ActualName)
             // PredatorArrival(scene,predatorObject,train)
+            // PromptToPlaceTorch(scene)
+            PredatorWarning(scene,predatorObject.ActualName)
+            PredatorArrival(scene,predatorObject,train)
 
             if (train === 1){
                 predatorObject.visible = true
                 if (trialNum <=5) {
                     OptimalTorchLocationMarker(scene, ActualMean[0])
+                    scene.MeanAngle = ActualMean[0]
                 } else if (trialNum>5){
                     OptimalTorchLocationMarker(scene,ActualMean[1])
+                    scene.MeanAngle = ActualMean[1]
                 }
 
             }
@@ -329,11 +342,13 @@ export const StartDelayTrain = (scene,predatorObject,train,trialNum,ActualMean,P
 
             else if(train === 2){
                 if (trialNum <=5){
-                    ShowAllPredators(scene,trialNum,Predator_PredefinedMean.slice(0,5),Predator_PredefinedTypes.slice(0,5),scene.sc_widt)
+                    // ShowAllPredators(scene,trialNum,Predator_PredefinedMean.slice(0,5),Predator_PredefinedTypes.slice(0,5),scene.sc_widt)
                     OptimalTorchLocationMarker(scene,ActualMean[0])
+                    scene.MeanAngle = ActualMean[0]
                 } else if (trialNum>5){
-                    ShowAllPredators(scene,trialNum-5,Predator_PredefinedMean.slice(5,10),Predator_PredefinedTypes.slice(5,10),scene.sc_widt)
+                    // ShowAllPredators(scene,trialNum-5,Predator_PredefinedMean.slice(5,10),Predator_PredefinedTypes.slice(5,10),scene.sc_widt)
                     OptimalTorchLocationMarker(scene,ActualMean[1])
+                    scene.MeanAngle = ActualMean[1]
                 }
                 predatorObject.visible = true   //predator waiting at its location becomes visible when warning occurs on training trials
             }
@@ -357,13 +372,20 @@ export const PredatorArrival = (scene,predatora,train) => {
            // console.log('Time after warning', predatora.AttackTime)
             var ch = predatora.name
 
+            // console.log('torch initiation',scene.torch_initiation)
+
             RunAnimation(scene)
             predatora.play(ch)
+
+            if (scene.torch_initiation === 1) {
+                scene.torchx = scene.Torch.x  //if person hasn't fixed torch himself, then consider the auto fix location for data saving
+                scene.torchy = scene.Torch.y
+            }
 
 
 
             scene.PredatorText.destroy();
-            scene.torch_initiation =5;
+            scene.torch_initiation =2;
             scene.InitialMouseClick_movement = true
 
             //position of player saved so it can be used to calculate predator marker (predator moves towards player rather than center of circle)
@@ -379,16 +401,17 @@ export const PredatorArrival = (scene,predatora,train) => {
             //     scalesize = 0.16   //max scale of flame is 0.16  //0.16 scale is approx. 46 deg
             // }
 
-            var scalesize = scene.MinimumFlameSize + RandomSampleFromExponential(1/0.5)   //Mean of exponential dist. = 1/lambda
-
-            if (scalesize > 0.5 ){
-                scalesize = 0.5   //max scale of flame is 0.16
-            }
-
-            scene.Torch.setScale(scene.MinimumFlameSize + scalesize/4)   //minFlameSize added so size is between min flame size to end of distribution instead of starting from 0
-            scene.torch_smoke.setScale(scalesize)
+            // var scalesize = scene.MinimumFlameSize + RandomSampleFromExponential(1/0.5)   //Mean of exponential dist. = 1/lambda
+            //
+            // if (scalesize > 0.5 ){
+            //     scalesize = 0.5   //max scale of flame is 0.16
+            // }
+            //
+            // scene.Torch.setScale(scene.MinimumFlameSize + scalesize/4)   //minFlameSize added so size is between min flame size to end of distribution instead of starting from 0
+            // scene.torch_smoke.setScale(scalesize)
             //scene.Torch.setScale(0.4)
-            scene.torchsize = scalesize
+            // scene.torchsize = scalesize
+            scene.torchsize = scene.torch_smoke.scale
             scene.Torch.body.updateFromGameObject()
             scene.torch_smoke.body.updateFromGameObject()
 
@@ -401,6 +424,7 @@ export const PredatorArrival = (scene,predatora,train) => {
             //
 
             predatora.visible = true
+            predatora.body.enable = true
             predatora.body.updateFromGameObject()
             predatora.scene.add.existing(predatora)
 
@@ -449,7 +473,7 @@ export const PredatorWarning = (scene,texture) => {
     // var txt = this.add.text(30, 200, texture);
     // txt.setColor('white')
     Alarm(scene)
-    ScoreUpdate(scene)  //Score only updates once predator warning appears
+    ScoreIncrementUpdate(scene)  //Score only updates once predator warning appears
 
     var predatorText = scene.make.text({x: scene.sc_widt,
         y: scene.sc_high - 240,
@@ -482,33 +506,24 @@ export const PromptToPlaceTorch = (scene) => {
 
     // This function creates text prompting players to move and place torch
 
-    var promptText = scene.make.text({x: scene.sc_widt,
-        y: scene.sc_high - 260,
-        text: 'Please Choose Flame Location',
-        origin: 0.5,
-        style: {
-            font: 'bold 15px Arial',
-            fill: 'white',
-            backgroundColor: 'rgba(236,87,7,0.78)'
+    if (scene.torch_initiation === 0) {
+        var promptText = scene.make.text({
+            x: scene.sc_widt,
+            y: scene.sc_high - 260,
+            // text: 'Please Choose Firewood Location',
+            text: 'Click To Turn Fire On',
+            origin: 0.5,
+            style: {
+                font: 'bold 15px Arial',
+                fill: 'white',
+                backgroundColor: 'rgba(236,87,7,0.78)'
 
-        },
+            },
 
-    })
+        })
 
-    // var predatorText = scene.make.text({
-    //     x: 320,
-    //     y: 103,
-    //     text: 'Next Animal: ' + scene.predator.ActualName + ' ' + scene.predator.SpeedType,
-    //     origin: 0.5,
-    //     style: {
-    //         font: 'bold 15px Arial',
-    //         fill: 'white',
-    //         backgroundColor: 'rgba(6,9,199,0.78)'
-    //         // backgroundColor: 'rgba(83,231,66,0.78)',
-    //     },
-    // })
-
-    return [promptText]
+        return [promptText]
+    }
 
 }
 
@@ -536,7 +551,7 @@ export const PromptToPlaceTorch = (scene) => {
 export const TrainingPromptToMoveTorch = (scene) => {
     var promptText = scene.make.text({x: scene.sc_widt,
         y: scene.sc_high - 230,
-        text: 'Please Activate Flame by'  + ' Clicking on Avatar'+ '\n'  + ' and Choose Flame Location by Clicking Again',  ///
+        text: 'Please Activate Fire by'  + ' Clicking on Avatar'+ '\n'  + ' and Fix Location by Clicking Again',  ///
         origin: 0.5,
         style: {
             font: 'bold 15px Arial',
@@ -555,7 +570,7 @@ export const TrainingPromptToMoveTorch = (scene) => {
 export const PromptToTurnTorchOn = (scene) => {
     var promptText = scene.make.text({x: scene.sc_widt,
         y: scene.sc_high - 230,
-        text: 'Please Turn Flame On by' +'\n' +' Clicking Left Mouse Button',
+        text: 'Please Turn Fire On by' +'\n' +' Clicking Left Mouse Button',
         origin: 0.5,
         style: {
             font: 'bold 15px Arial',
@@ -571,18 +586,183 @@ export const PromptToTurnTorchOn = (scene) => {
 
 }
 
+export const TrainingPromptAboutTorchLocation = (scene) => {
+    // Gives feedback to how close people were to the mean (optimal location)
 
 
-export const ScoreUpdate = (scene) => {
 
-    //Function to update score, 1 increment after every 7ms
+    let LowerBoundMean = mod(scene.MeanAngle-3,360)   //margin of locations around the mean where the participants can place torch (3 degrees)
+    let UpperBoundMean = mod(scene.MeanAngle+3,360)
+    // console.log('Prompt Started', scene.Success, scene.torchangle, scene.MeanAngle, LowerBoundMean,UpperBoundMean)
+
+
+    if (scene.torchturnedON === 1){
+
+        if (LowerBoundMean <= scene.torchangle && scene.torchangle <= UpperBoundMean && scene.Success == 0)
+        {
+            var promptText = scene.make.text({x: scene.sc_widt,
+                y: scene.sc_high + 200,
+                text: 'Fire started at the Correct Location (Most Frequent Running Direction)' +'\n' +' Failed Due to Randomness in Predator Running Direction'
+                    +'\n' +'Click to Continue',  ///
+                origin: 0.5,
+                style: {
+                    font: 'bold 15px Arial',
+                    fill: 'white',
+                    backgroundColor: 'rgba(49,192,166,0.58)',
+                    align: 'center'
+                },
+
+            })
+            ClickToRestart(scene)
+
+            // scene.time.addEvent({
+            //     delay: 2000,
+            //     callback: () => {
+            //         scene.time.delayedCall(3000, scene.scene.restart(), [], scene)
+            //     },
+            //     loop: false
+            // })
+
+
+
+        }
+
+        if (LowerBoundMean <= scene.torchangle && scene.torchangle <= UpperBoundMean && scene.Success == 1)
+        {
+            var promptText = scene.make.text({x: scene.sc_widt,
+                y: scene.sc_high + 200,
+                text: 'Fire Started at the Correct Location (Most Frequent Running Direction)' +'\n' +' Success!' +'\n' +'Click to Continue',  ///
+                origin: 0.5,
+                style: {
+                    font: 'bold 15px Arial',
+                    fill: 'white',
+                    backgroundColor: 'rgba(49,192,166,0.58)',
+                    align: 'center'
+                },
+
+            })
+            ClickToRestart(scene)
+
+            // scene.time.addEvent({
+            //     delay: 2000,
+            //     callback: () => {
+            //         scene.time.delayedCall(3000, scene.scene.restart(), [], scene)
+            //     },
+            //     loop: false
+            // })
+
+        }
+
+        if (!(LowerBoundMean <= scene.torchangle && scene.torchangle <= UpperBoundMean) && scene.Success == 0)
+        {
+            var promptText = scene.make.text({x: scene.sc_widt,
+                y: scene.sc_high + 200,
+                text: 'Fire Started at Incorrect Location' +'\n' +'Failed Trial' +'\n' +'Click to Continue',  ///
+                origin: 0.5,
+                style: {
+                    font: 'bold 15px Arial',
+                    fill: 'white',
+                    backgroundColor: 'rgba(213,129,118,0.78)',
+                    align: 'center'
+                },
+
+            })
+            ClickToRestart(scene)
+
+            // scene.time.addEvent({
+            //     delay: 2000,
+            //     callback: () => {
+            //         scene.time.delayedCall(3000, scene.scene.restart(), [], scene)
+            //     },
+            //     loop: false
+            // })
+
+        }
+
+        if (!(LowerBoundMean <= scene.torchangle && scene.torchangle <= UpperBoundMean) && scene.Success == 1)
+        {
+            var promptText = scene.make.text({x: scene.sc_widt,
+                y: scene.sc_high + 200,
+                text: 'Fire Started at Incorrect Location' +'\n' +'Saved Just Due to Inherent Randomness in Predator Running Direction'
+                        +'\n' +'Click to Continue',  ///
+                origin: 0.5,
+                style: {
+                    font: 'bold 15px Arial',
+                    fill: 'white',
+                    backgroundColor: 'rgba(213,129,118,0.78)',
+                    align: 'center'
+                },
+
+            })
+
+            ClickToRestart(scene)
+
+            // scene.time.addEvent({
+            //     delay: 2000,
+            //     callback: () => {
+            //         scene.time.delayedCall(3000, scene.scene.restart(), [], scene)
+            //     },
+            //     loop: false
+            // })
+
+        }
+
+    }
+
+    else if (scene.torchturnedON === 0){
+
+        var promptText = scene.make.text({x: scene.sc_widt,
+            y: scene.sc_high + 200,
+            text: 'You Failed to Turn the Fire On' +'\n' +'Click to Continue',  ///
+            origin: 0.5,
+            style: {
+                font: 'bold 15px Arial',
+                fill: 'white',
+                backgroundColor: 'rgba(213,129,118,0.78)',
+                align: 'center'
+            },
+
+        })
+        ClickToRestart(scene)
+
+        // scene.time.addEvent({
+        //     delay: 2000,
+        //     callback: () => {
+        //         scene.time.delayedCall(3000, scene.scene.restart(), [], scene)
+        //     },
+        //     loop: false
+        // })
+
+    }
+
+    return promptText
+
+
+}
+
+
+export const ClickToRestart = (scene) => {
+
+    scene.input.on('pointerdown', function () {
+        scene.time.delayedCall(50, scene.scene.restart(), [], scene)
+
+    }, scene);
+
+
+}
+
+
+
+export const ScoreIncrementUpdate = (scene) => {
+
+    //Function to add points to the kitty, 1 increment after every 7ms
     var count = 0
 
     scene.scoreEvent = scene.time.addEvent({
         delay: 100,
         callback: function () {
-            if (scene.torch_initiation === 4) {
-                scene.score += 1
+            if (scene.torch_initiation === 0) {
+                // scene.score += 1
                 count += 1;
                 scene.ScoreIncrement = count;
             }
@@ -594,6 +774,54 @@ export const ScoreUpdate = (scene) => {
 
 }
 
+export const ScoreDecrementOnFailure = (scene,minusScore) => {
+    //Function to decrement score, 1 decrement after every 1ms
+    var count = minusScore
+    var penalty = 10
+
+    scene.scoreEvent = scene.time.addEvent({
+        delay: 20,
+        callback: function () {
+            if (penalty > 0 & scene.score > 0 & !scene.torchturnedON) {   // -10 penalty if torch not turned on
+                scene.score -= 1
+                penalty -= 1;
+
+            }
+
+            if (count > 0 & scene.ScoreIncrement>0){
+                scene.ScoreIncrement -= 1
+                count -= 1
+            }
+        },
+        callbackScope: scene,
+        loop: true
+    });
+
+
+
+}
+
+export const AddScoreOnSuccess = (scene,plusScore) => {
+    //Function to decrement score, 1 decrement after every 7ms
+    var count = 0
+
+    scene.scoreEvent = scene.time.addEvent({
+        delay: 25,
+        callback: function () {
+            if (count < plusScore ) {
+                scene.score += 1
+                count += 1;
+
+            }
+        },
+        callbackScope: scene,
+        loop: true
+    });
+
+
+
+}
+
 export const RotatePredatorToPlayer = (scene,rotAngle,PredatorObject,PlayerObject) => {
     //Rotate predator so it faces the Player
 
@@ -601,21 +829,85 @@ export const RotatePredatorToPlayer = (scene,rotAngle,PredatorObject,PlayerObjec
     //if (scene.predator.x > scene.Player.x)
 
     // if (PredatorObject.x > PlayerObject.x)
-    if (rotAngle < 180)
+
+    rotAngle = mod(rotAngle,2*Math.PI)   // Convert -ve values (-pi to pi) to 0 to 2PI
+
+    // console.log(scene.PrevCoordinate)
+    // Deal with each coordinate separately
+
+    // console.log('AngleRotation',rotAngle)
+
+
+    if (rotAngle <= Math.PI/2 & rotAngle > 0)
     {
-        PredatorObject.setRotation(rotAngle)
+        PredatorObject.setRotation(rotAngle)  // Coordinate1
+        // PredatorObject.flipY = true
+
+        if (scene.PrevCoordinate == 2 ||  scene.PrevCoordinate == 3) {
+            // PredatorObject.flipY = false
+            PredatorObject.flipY = false
+        }
+        scene.PrevCoordinate = 1
+        // console.log('Coordinate 1')
+    }
+
+    else if (rotAngle <= Math.PI & rotAngle > Math.PI/2)
+    {
+        PredatorObject.setRotation(rotAngle)   // Coordinate2
         PredatorObject.flipY = true
+
+        // if (scene.PrevCoordinate != 3) {
+        //     PredatorObject.flipY = true
+        // }
+
+        scene.PrevCoordinate = 2
+        // console.log('Coordinate 2')
     }
-    else
+
+    else if (rotAngle <= (3*(Math.PI/2)) & rotAngle > Math.PI)
     {
-        PredatorObject.setRotation(rotAngle)
+        PredatorObject.setRotation(rotAngle)  // Coordinate3
+        // PredatorObject.flipY = true
+
+
+        if (scene.PrevCoordinate == 2 ) {
+            // PredatorObject.flipY = false
+            PredatorObject.resetFlip()
+        }
+
+
+        else if (scene.PrevCoordinate == 4 || scene.PrevCoordinate == 1 || scene.PrevCoordinate == 0 ){
+            PredatorObject.flipY = true
+
+        }
+
+
+
+        scene.PrevCoordinate = 3
+        // console.log('Coordinate 3')
+
     }
+
+    else if (rotAngle <= 2*Math.PI & rotAngle > (3*(Math.PI/2)))
+    {
+        PredatorObject.setRotation(rotAngle)  // Coordinate4
+
+        // PredatorObject.flipY = true
+        // PredatorObject.flip = true
+        PredatorObject.flipY = false
+        scene.PrevCoordinate = 4
+        // console.log('Coordinate 4')
+
+    }
+
+    // console.log('Flipped',PredatorObject.flipY)
 }
 
 export const PlayerPredatorCollision = (scene,train) => {
 
     //collider that kills Player and restarts game on collision between Player and predator
     scene.Success = 0
+    // scene.torch_initiation = 0
     ScreamPlayer(scene)
     scene.predator.active = false
     scene.predator.body.moves = false
@@ -624,6 +916,21 @@ export const PlayerPredatorCollision = (scene,train) => {
     // if (this.AfterChangeCount === 0) {
     //     this.lives--;    //3 trials after changepoint are safe trials, after which players start losing lives
     // }
+
+    // Decrease the score if participants fail a trial
+    let text1 = "-" + scene.ScoreIncrement
+    let color1 = 'rgb(231,69,57)'
+    ScoreDecrementOnFailure(scene,scene.ScoreIncrement)
+    MovingText(scene,text1,scene.Player, color1, 45)
+
+
+    if (!scene.torchturnedON) {
+        let text = "-" + "10"
+        let color = 'rgb(231,69,57)'   //show a -10 visible prompt if torch not turned on and reduce 10 points
+
+        // ScoreDecrementOnFailure(scene,10, scene.score)
+        MovingText(scene,text,scene.Player, color,60)
+    }
 
     if (train == 0) {
 
@@ -644,7 +951,9 @@ export const PlayerPredatorCollision = (scene,train) => {
         if (scene.lives !== 0) {
             scene.Player.play('explode').once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                // console.log('animation complete')
-                scene.torch_initiation = 0
+
+                // scene.torch_initiation = 0
+
                 scene.addData()
                 scene.Player.destroy();
 
@@ -666,11 +975,19 @@ export const PlayerPredatorCollision = (scene,train) => {
 
         scene.Player.play('explode').once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
            // console.log('animation complete')
-            scene.torch_initiation = 0
+           //  scene.torch_initiation = 0
             scene.lives--
             scene.Player.destroy();
 
-            scene.time.delayedCall(40, scene.scene.restart(), [], scene)
+            if (train === 2) {
+                TrainingPromptAboutTorchLocation(scene)
+            }
+
+            else {
+                scene.time.delayedCall(40, scene.scene.restart(), [], scene)
+            }
+
+
             //this.scene.restart()
 
 
@@ -687,21 +1004,34 @@ export const TorchPredatorCollision = (scene,train) => {
     const rotateAngle = scene.physics.moveTo(scene.predator, scene.sc_widt,scene.sc_high, scene.Predator_Speed)
     scene.predator.flipX = true //  accurately make animal run away, flipping it appropriately
 
-    console.log(scene.startx,scene.starty)
+    // console.log(scene.startx,scene.starty)
+
+    // Add points accumulated to the total score on success
+    AddScoreOnSuccess(scene,scene.ScoreIncrement,scene.score)
 
     // score increases depending on type of predator scared away
-    MovingText(scene, scene.ScoreIncrement, scene.torch_smoke)
+    let textString = "+" + scene.ScoreIncrement
+    MovingText(scene, textString, scene.torch_smoke)
 
 
     scene.time.addEvent({
         delay: 550,
         callback: () => {
-            scene.torch_initiation = 0
+            // scene.torch_initiation = 0
             scene.predator.destroy()
             if (train == 0) {
                 scene.addData()
             }
-            scene.scene.restart()
+            // scene.scene.restart()
+
+            if (train === 2) {
+                TrainingPromptAboutTorchLocation(scene)
+            }
+
+            else {
+                scene.scene.restart()
+                // scene.time.delayedCall(40, scene.scene.restart(), [], scene)
+            }
 
 
         },
@@ -740,7 +1070,7 @@ export const PredatorAttackingPlayer = (scene,predatorObject,predatorAngle,Playe
     let stepSize = AngularDistance/stepNumber
     let theta = Phaser.Math.DegToRad(predatorAngle)
 
-    console.log(AngularDistance,sign,stepNumber,theta,Phaser.Math.DegToRad(PlayerAngle))
+    // console.log(AngularDistance,sign,stepNumber,theta,Phaser.Math.DegToRad(PlayerAngle))
 
     for(let i=0;i<stepNumber;i++){
 
@@ -750,14 +1080,14 @@ export const PredatorAttackingPlayer = (scene,predatorObject,predatorAngle,Playe
         let y = scene.sc_widt + new2;
         let x = scene.sc_high + new1;
 
-        console.log(theta, x,y)
+        // console.log(theta, x,y)
 
 
         var rotAngle = scene.physics.moveTo(predatorObject,x,y,scene.Predator_Speed)
         RotatePredatorToPlayer(scene,rotAngle,scene.predator,scene.Player)
 
         setTimeout(function() {
-            console.log(i);
+            // console.log(i);
         }, 2000 * i);
 
 
@@ -794,12 +1124,12 @@ export const TorchPredatorMarkers = (scene) => {
         let PredatorPlayerLine = new Phaser.Geom.Line(scene.sc_widt,scene.sc_high,scene.Prev_predator_x,scene.Prev_predator_y)
         let circle =new Phaser.Geom.Circle(scene.sc_widt, scene.sc_high, scene.radius)
 
-        console.log(PredatorPlayerLine)
+        // console.log(PredatorPlayerLine)
 
         var checkpoint,xi,yi
         checkpoint = Phaser.Geom.Intersects.GetLineToCircle(PredatorPlayerLine,circle) //find intersection between circle and line
 
-        console.log(checkpoint)
+        // console.log(checkpoint)
 
         xi = checkpoint[0].x
         yi= checkpoint[0].y
@@ -824,6 +1154,11 @@ export const OptimalTorchLocationMarker = (scene,ActualPredatorMean) => {
     const optimal_loc = scene.add.line(MeanX, MeanY, 0, 0, 15, 15, 0x399a2d)
     optimal_loc.setRotation(AngleRad + 40)  //40 subtracted so line is appropriately representing prev loc
 
+    // Also rotate predator to face the optimal location once it appears
+   let CurrentPredatorAngle = Phaser.Math.Angle.Between(scene.sc_widt, scene.sc_high,MeanX,MeanY)
+
+    RotatePredatorToPlayer(scene,CurrentPredatorAngle,scene.predator,scene.Player)
+
 
 }
 
@@ -833,7 +1168,7 @@ export const PredatorPath = (scene) => {
     graphics.lineStyle(2, 0x00ff00, 1);
 
     // graphics.lineBetween(scene.startx,scene.starty,scene.Player.x,scene.Player.y);
-    graphics.lineBetween(scene.sc_widt,scene.sc_high,scene.Player.x,scene.Player.y);
+    graphics.lineBetween(scene.sc_widt,scene.sc_high,scene.startx,scene.starty);
 }
 
 export const ShowAllPredators = (scene,trialNo,PredatorArray,PredatorType,rad)=>{
@@ -874,17 +1209,17 @@ export const ShowAllPredators = (scene,trialNo,PredatorArray,PredatorType,rad)=>
 
 }
 
-export const MovingText = (scene, text, object) => {
+export const MovingText = (scene, text, object, color = 'rgb(0,58,248)', AddedCoord = 45) => {
 
     // this function shows the points added to score when players are successful in fending off predator
 
-    var TextToMove = scene.make.text({x: (object.x + Math.sign(object.x - scene.sc_widt)*60),
-        y: object.y + Math.sign(object.y)*60,
-        text: '+ ' + text,
+    var TextToMove = scene.make.text({x: (object.x + Math.sign(object.x - scene.sc_widt)*AddedCoord),
+        y: object.y + Math.sign(object.y)*AddedCoord,
+        text: text,
         origin: 0.5,
         style: {
-            font: '16px Arial',
-            fill: 'rgb(0,58,248)',
+            font: '17px Arial',
+            fill: color,
         },
 
     })
@@ -988,7 +1323,7 @@ export const ScoreSubtraction = (scene,trialsMoved,score) =>{
 
     NoMovementNum = trialsMoved.filter(element => element === 0).length;  //calculate number of zeros in array (trials in which torch was not moved)
 
-    CorrectedScore = score - 10*NoMovementNum  //0 score penalty for each no movement trial
+    CorrectedScore = score - 0*NoMovementNum  //0 score penalty for each no movement trial
 
 
     if (CorrectedScore<=0){
@@ -1008,8 +1343,8 @@ export const saveData = (scene) =>  {
     [scene.scoreNormalized,scene.NumberTrialsNotON] = ScoreSubtraction(scene,scene.cache.game.data.torchON,scene.cache.game.data.Totalscore[scene.trialcount-1])
 
 
-    if (scene.game.highscore < scene.scoreNormalized){
-        scene.game.highscore = scene.scoreNormalized;
+    if (scene.game.highscore < scene.score){
+        scene.game.highscore = scene.score;
     }
 
     // console.log('save data initiated')
@@ -1083,11 +1418,13 @@ export const movePredatorinCircularPath = (scene,predatorObject,theta,AngDistanc
 
             scene.torch_smoke.body.enable = false
 
+
+
             // console.log(sign, AngDistance)
 
             // theta = mod(theta + (sign*0.015),2*Math.PI)
 
-            console.log('Ang dist',AngDistance, scene.theta, scene.torchangle, Phaser.Math.RadToDeg(scene.theta))
+            // console.log('Ang dist',AngDistance, scene.theta, scene.torchangle, Phaser.Math.RadToDeg(scene.theta))
             scene.theta = mod(scene.theta + (sign*0.15),2*Math.PI)
 
 
@@ -1103,15 +1440,17 @@ export const movePredatorinCircularPath = (scene,predatorObject,theta,AngDistanc
             // predatorObject.y = x
             var rotAngle = scene.physics.moveTo(predatorObject,scene.target.x,scene.target.y,scene.Predator_Speed)
 
-            console.log(scene.target,scene.Predator_Speed)
+            // console.log(scene.target,scene.Predator_Speed)
+
+            rotAngle = mod(rotAngle,2*Math.PI)
 
 
             RotatePredatorToPlayer(scene,rotAngle,scene.predator,scene.Player)
 
 
 
-            console.log('Theta',scene.theta)
-            console.log('Rot angle', rotAngle)
+            // console.log('Theta',scene.theta)
+            // console.log('Rot angle', (rotAngle))
 
 
 
@@ -1148,9 +1487,6 @@ export const movePredatorinCircularPath = (scene,predatorObject,theta,AngDistanc
     // })
 }
 
-export const PredatorDistributionAroundCenter = (scene,angle,rad) => {
-
-}
 
 
 

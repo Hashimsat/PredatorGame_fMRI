@@ -14,7 +14,7 @@ export default class FinalPracticeInstructions extends Phaser.Scene {
 
     preload() {
 
-        this.load.image('Slide10','assets/Resize10.png')
+        this.load.image('Slide14','assets/Resize14.png')
 
     }
 
@@ -23,7 +23,7 @@ export default class FinalPracticeInstructions extends Phaser.Scene {
 
         const sc_widt = this.scale.width / 2
         const sc_high = this.scale.height / 2
-        var Instruct1 = this.add.image(sc_widt,sc_high,'Slide10')
+        var Instruct1 = this.add.image(sc_widt,sc_high,'Slide14')
 
 
         const NextButton= this.add.text(900, 575, 'Next', { fill: '#0f0' });

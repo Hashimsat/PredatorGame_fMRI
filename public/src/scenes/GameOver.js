@@ -58,12 +58,13 @@ export default class GameOver extends Phaser.Scene
             })
                 .setOrigin(0.5)
 
-            this.add.text(width * 0.5, height * 0.55, 'Final Score:' + this.scoreNormalized, {
-                fontSize: 25
-            })
-                .setOrigin(0.5)
 
-            this.add.text(width * 0.5, height * 0.7, 'Highscore: ' + this.game.highscore, {
+            // this.add.text(width * 0.5, height * 0.55, 'Final Score:' + this.scoreNormalized, {
+            //     fontSize: 25
+            // })
+            //     .setOrigin(0.5)
+
+            this.add.text(width * 0.5, height * 0.6, 'Highscore: ' + this.game.highscore, {
                 fontSize: 25,
                 color: 'rgba(13,239,5)'
             })

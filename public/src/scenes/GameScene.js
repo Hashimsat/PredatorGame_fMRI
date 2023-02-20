@@ -50,7 +50,7 @@ export default class GameScene extends Phaser.Scene {
 
 
     //torch initialization variables
-    MinimumFlameSize=15/100
+    MinimumFlameSize=20/100
 
     //variable for torch and fire
     torch_handle
@@ -81,21 +81,25 @@ export default class GameScene extends Phaser.Scene {
     AfterChangeCount
 
     //variables to store location of torch position and place of predator arrival in previous trial, so markers can be placed at these points
+    // Prev_torch_x = 320+80
+    // Prev_torch_y = 320
+
     Prev_torch_x = null
     Prev_torch_y = null
-    Prev_torch_angle
+    Prev_torch_angle = - Math.PI/2
     Prev_predator_x
     Prev_predator_y
     Prev_predator_angle
     Prev_Player_Finalx = 320+175
     Prev_Player_Finaly = 320
+    PrevCoordinate = 0
 
 
     //Variables for Data Collection -> Trial Info
     trialNum = 0
     PredAngle
     PredType; PredSpeed;  PredAttackTime
-    PredStd;
+    PredStd; PlayerAngle
     torchx=0;
     torchy=0; torchangle = 0; torchsize; torchMovement=0; torchturnedON = 0;
     PredictAngle;Success; //success = 0 if player eaten by predator
@@ -156,13 +160,10 @@ export default class GameScene extends Phaser.Scene {
         this.trialNum = this.trialNum + 1
         this.CP = 0 //first trial not a changepoint
         this.torchMovement = 0 //torch not moved initially
-        this.torchturnedON = 0
+        this.torchturnedON = 0; this.torch_initiation = 0;
         this.torchx = null;this.torchy=null;this.torchangle = null;
         this.RTInit = null ; this.RTConf = null ; this.RTTorchOn = null;
-        this.zone_collider = 0
-
-
-
+        this.zone_collider = 0; this.PrevCoordinate = 0; this.ScoreIncrement = 0;
 
 
         //set game time as time at start of game
@@ -193,14 +194,8 @@ export default class GameScene extends Phaser.Scene {
 
         //Select a predator randomly from the 3 options available
 
-        if (this.trialNum === 1) {
-            this.ChoosePredatorBlocked()
-        }
-
-        //
-        // const PredatorArray = [1, 2, 3]   //each number represents a specific predator; 1=Cheetah, 2=Panther; 3=Snow
-        // this.PredType = Phaser.Utils.Array.GetRandom(PredatorArray)   //choose one number randomly from PredatorArray
-
+        const PredatorArray = [1, 2, 3]   //each number represents a specific predator; 1=Cheetah, 2=Panther; 3=Snow
+        this.PredType = Phaser.Utils.Array.GetRandom(PredatorArray)   //choose one number randomly from PredatorArray
 
         //ChoosePredator function chooses predator depending upon the value in this.PredType
         this.predator = ChoosePredator(this,this.PredType,this.sc_widt, this.sc_high)
@@ -210,29 +205,44 @@ export default class GameScene extends Phaser.Scene {
         ///////
 
 
+        //
+        // const PredatorArray = [1, 2, 3]   //each number represents a specific predator; 1=Cheetah, 2=Panther; 3=Snow
+        // this.PredType = Phaser.Utils.Array.GetRandom(PredatorArray)   //choose one number randomly from PredatorArray
 
-        ///
 
-        this.time.addEvent({
-            delay: 50,
-            callback: () => {
-                [this.Prompt] = PromptToPlaceTorch(this)
-                //PredatorWarning(scene,predatorObject.ActualName)
-                //PredatorArrival(scene,predatorObject,train)
-            },
-            loop: false
-        });
+
+        StartDelayTest(this,this.predator,this.train)   //add a delay after which warning occurs, and then predator appears after another delay that depends upon type of predator chosen
+
+        // console.log(this.Player.angle)
+
+
+        // this.time.addEvent({
+        //     delay: 50,
+        //     callback: () => {
+        //         [this.Prompt] = PromptToPlaceTorch(this)
+        //         //PredatorWarning(scene,predatorObject.ActualName)
+        //         //PredatorArrival(scene,predatorObject,train)
+        //     },
+        //     loop: false
+        // });
 
         //make collider bounds same as object
+
+        this.predator.setBodySize(75,75,true)
+        // this.predator.body.setCircle(20,150,100)
         this.predator.body.updateFromGameObject()
-        this.predator.setBodySize(15,15,true)
+        this.predator.body.enable = false
+
+        // this.predator.body.center
+        // this.torch_smoke.body.updateFromGameObject()
+
         //this.Torch.setBodySize(200,200,true)
 
         //put a circular body around torch, centered correctly
 
         // Degrees to pixel conversion debug
         // var g1 = this.add.grid(320, 320, 250, 250, 5, 5, 0xff0000).setAltFillStyle(0x016fce).setOutlineStyle().setAlpha(0.5);
-        //
+
         // for( let i = 0; i<=360; ){
         //
         //         var angleCh = Phaser.Math.DegToRad(i)
@@ -265,24 +275,9 @@ export default class GameScene extends Phaser.Scene {
         this.zone.body.moves = false;
         this.zone.body.setCircle(200);
 
-        console.log(this.zone)
+        // console.log(this.zone)
 
         this.physics.add.overlap(this.predator, this.zone);
-
-        this.zone.on('enterzone', () => console.log('enterzone'));
-        this.zone.on('leavezone', () => console.log('leavezone'));
-
-//         let zone = this.add.zone(320,320)
-//         this.physics.world.enable(zone);
-//         zone.body.setCircle(150);
-//
-// // 3. THE FUNCTION
-//         const onOverlap = (sprite, zone) => {
-//             console.log('THE SPRITE IS OVER THE ZONE')
-//         }
-//
-// // 4. WHERE EVERYTHING COMES TO LIVE.
-//         this.physics.add.overlap(this.predator, zone, onOverlap)
 
 
         //score count and update
@@ -315,11 +310,19 @@ export default class GameScene extends Phaser.Scene {
 
         //
         this.radPredCircle = Math.min(window.innerWidth,window.innerHeight)
+        console.log(this.torch_initiation)
 
         this.Player.on('pointerdown',function (){
             if (this.torch_initiation === 0) {
                 this.torch_initiation=1;  //click mouse on character to start moving torch
                 this.torchMovement = 1;
+                this.torchturnedON = 1;
+                this.Torch.setVisible(true)
+                this.torch_smoke.setVisible(true)
+                this.torch_smoke.body.enable = true
+                this.torch_handle.setVisible(true)         //make the handle and torch visible
+
+                // console.log('Torch Initiated')
 
                 //save Initiation Reaction Time
                 var timeInit =  new Date().getTime()   //calculates number of milliseconds since 1970 to current time
@@ -333,10 +336,11 @@ export default class GameScene extends Phaser.Scene {
         if (this.torch_initiation === 1){
             [this.Prev_torch_x, this.Prev_torch_y, this.Prev_torch_angle, this.torchangle] = moveTorchOnCircle(this, this.Torch, this.torch_handle,this.torch_smoke, this.Player, this.torchMovement, this.input.x, this.input.y)
 
+
             this.input.on('pointerdown', function () {
 
                 if (this.torch_initiation === 1) {
-                    //start moving torch when torch is initiated
+                    //fix torch location if clicked again
 
                     this.torch_initiation = 3;
                     this.torchx = this.Torch.x;  //store final location of torch
@@ -354,45 +358,46 @@ export default class GameScene extends Phaser.Scene {
 
 
 
-        if (this.torch_initiation === 3){
-            // Predator only arrives after participants have fixed their torches
-            this.torch_initiation =4;   // Once predator arrives, change torch_initiation value
-            this.Prompt.destroy()
-
-            // console.log(this.torch_initiation)
-            PredatorWarning(this,this.predator.ActualName)
-            PredatorArrival(this,this.predator,this.train)
-        }
-
-        if (this.torch_initiation === 4){
-
-
-            // After fixing torch, click again to turn torch on
-            this.input.on('pointerdown', function () {
-                if (this.torch_initiation === 4) {
-
-                    var timeConfirm = new Date().getTime()   //calculates number of milliseconds since 1970 to current time
-
-                    this.RTTorchOn = Math.abs(timeConfirm - this.game.ms)   //time at which participants turns torch on
-                    this.torchturnedON = 1;
-
-                    this.torch_initiation = 5;
-
-                    this.Torch.setVisible(true);
-                    this.Torch.body.enable = true;
-                    this.torch_smoke.setVisible(true);
-                    this.torch_smoke.body.enable = true;
-
-                }
-            }, this)
-
-        }
+        // if (this.torch_initiation === 3){
+        //     // Predator only arrives after participants have fixed their torches
+        //     this.torch_initiation =4;   // Once predator arrives, change torch_initiation value
+        //     this.Prompt.destroy()
+        //
+        //     // console.log(this.torch_initiation)
+        //     PredatorWarning(this,this.predator.ActualName)
+        //     PredatorArrival(this,this.predator,this.train)
+        // }
+        //
+        // if (this.torch_initiation === 4){
+        //
+        //
+        //     // After fixing torch, click again to turn torch on
+        //     this.input.on('pointerdown', function () {
+        //         if (this.torch_initiation === 4) {
+        //
+        //             var timeConfirm = new Date().getTime()   //calculates number of milliseconds since 1970 to current time
+        //
+        //             this.RTTorchOn = Math.abs(timeConfirm - this.game.ms)   //time at which participants turns torch on
+        //             this.torchturnedON = 1;
+        //
+        //             this.torch_initiation = 5;
+        //
+        //             this.Torch.setVisible(true);
+        //             this.Torch.body.enable = true;
+        //             this.torch_smoke.setVisible(true);
+        //             this.torch_smoke.body.enable = true;
+        //
+        //         }
+        //     }, this)
+        //
+        // }
 
 
         //show score and number of lives left
 
         this.scoretext.setText('Lives Left: ' + this.lives +
-            '\nScore: ' + this.score)
+            '\nScore: ' + this.score +
+            '\nPoints Collected: ' + this.ScoreIncrement)
 
         //monitor if esc is pressed and discontinue if it is
         if (this.escape.isDown){
@@ -401,6 +406,12 @@ export default class GameScene extends Phaser.Scene {
             this.scene.start('premature-end',{score: this.score, MaxLives: this.Max_lives, trialNumbers: this.trialNum, Discontinued: this.Discontinue,train:this.train,mousetrackX:this.Mouse_x,mousetrackY:this.Mouse_y,})
             // this.ReInitializeVariablesAtEnd();
         }
+
+        let theta = Math.atan2(this.Player.x - this.sc_widt, this.Player.y - this.sc_high)
+        theta = mod(Math.PI - theta,2*Math.PI)
+        theta = Phaser.Math.RadToDeg(theta)
+        theta = mod((theta + 270),360)
+        this.PlayerAngle = theta
 
 
         ///////////
@@ -411,7 +422,13 @@ export default class GameScene extends Phaser.Scene {
             this.zone.emit('leavezone');
             this.zone_collider = 1
 
-            this.AngularDistance = (CircularDistance(this,this.torchangle,this.PredAngle))
+            // we first find the Player angle, so predator runs towards it on the shortest circular path
+
+
+            this.AngularDistance = (CircularDistance(this,this.PlayerAngle,this.PredAngle))  //Predator runs towards player
+
+            // this.AngularDistance = (CircularDistance(this,this.torchangle,this.PredAngle))  //Predator runs towards torch
+
 
             movePredatorinCircularPath(this,this.predator,this.theta,this.AngularDistance)
 
@@ -471,7 +488,7 @@ export default class GameScene extends Phaser.Scene {
         this.cache.game.data.torch_x.push(this.torchx)
         this.cache.game.data.torch_y.push(this.torchy)
         this.cache.game.data.torchSize.push(this.torchsize)
-        this.cache.game.data.torchAngle.push(this.torchangle)
+
 
         this.cache.game.data.RTInitiation.push(this.RTInit)
         this.cache.game.data.RTConfirmation.push(this.RTConf)
@@ -486,10 +503,16 @@ export default class GameScene extends Phaser.Scene {
         }
         else if(this.torchMovement === 0)
         {
-            this.PredictAngle = null
+
+            this.torchangle = this.PlayerAngle
+            this.PredictAngle = CircularDistance(this,this.PredAngle,this.torchangle) // if player doesn't turn torch on, PE is between where the avatar is and where the predator appears
+            // this.PredictAngle = null
         }
 
         this.cache.game.data.PredictionError.push(this.PredictAngle)
+        this.cache.game.data.playerAngle.push(this.PlayerAngle)
+        this.cache.game.data.torchAngle.push(this.torchangle)
+
 
         this.cache.game.data.HitMiss.push(this.Success)
         this.cache.game.data.ChangePoint.push(this.CP)
@@ -507,8 +530,10 @@ export default class GameScene extends Phaser.Scene {
     ReInitializeVariablesAtEnd() {
 
         //After end of entire game, reset variable values after saving data
-        this.addData()
 
+
+        this.addData()
+        // console.log(this.cache.game.data)
 
         this.lives = this.Max_lives
         this.FirstTime = true
@@ -564,7 +589,7 @@ export default class GameScene extends Phaser.Scene {
             else if (this.AfterChangeCount === 0) {
 
 
-                let ChangeProbability = {1: 0.88, 2: 0.12}  //1 = stay same //2 = unexpected change point
+                let ChangeProbability = {1: 0.89, 2: 0.11}  //1 = stay same //2 = unexpected change point
 
                 let i, sum = 0, r = Math.random();
                 for (i in ChangeProbability) {
@@ -723,21 +748,6 @@ export default class GameScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-
-    }
-
-
-    ChoosePredatorBlocked(){
-
-        if (!this.PredatorArray.length){   // Refill predator array if it goes empty (after 3rd block)
-            this.PredatorArray = [1,2,3];
-        }
-
-        const randomItem = arr => arr.splice((Math.random() * arr.length) | 0, 1); //Pop a random item out of array
-        this.PredType = randomItem(this.PredatorArray)[0]   //choose one number randomly from PredatorArray
-
-        console.log(this.PredType)
-        console.log(this.PredatorArray)
 
     }
 

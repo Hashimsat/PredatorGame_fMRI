@@ -17,7 +17,7 @@ import {
     PredatorArrival,
     PromptToPlaceTorch,
     CircularDistance,
-    movePredatorinCircularPath,
+    movePredatorinCircularPath, mod,
 } from "../../Functions/GameFunctions.js";
 
 
@@ -35,10 +35,11 @@ export default class TrainingLast extends Phaser.Scene {
     radius = 150
     torch_initiation = 0;
     torchMovement = 0    //replaced spacebar_movement
+    torchturnedON = 0;
 
 
     //torch initialization variables
-    MinimumFlameSize=15/100
+    MinimumFlameSize=20/100
 
     //torch and fire
     torch_handle
@@ -48,7 +49,7 @@ export default class TrainingLast extends Phaser.Scene {
     Predator_Speed = 300
     //Predator_PredefinedMean = [71,73,60,79,55,329,327,345,362,330]   //variance 15, means are 75 and 340
     Predator_PredefinedMean = [49,352,358,19,21,0,12,354,168,203,198,207,145,171,213]   //std 20, means are 180 and 10
-    Predator_PredefinedTypes = [2,2,2,2,2,3,3,3,3,3,1,1,1,1,1]
+    Predator_PredefinedTypes = [2,1,3,1,2,2,3,1,1,2,2,1,3,3,1]
     ShowPredators
 
     //Get center of image
@@ -83,12 +84,13 @@ export default class TrainingLast extends Phaser.Scene {
 
     //Additional Predator Variables
     PredType
+    PrevCoordinate = 0
 
     //zone
     zone
     zone_collider = 0  // variable that allows the leaving zone function to run only once
     theta
-    AngularDistance
+    AngularDistance; PlayerAngle
     target = new Phaser.Math.Vector2();
 
     /** @type {Phaser.Physics.Arcade.Sprite} */
@@ -131,10 +133,12 @@ export default class TrainingLast extends Phaser.Scene {
 
         //initialize data variables
         this.torchMovement = 0 //torch not moved initially
+        this.torch_initiation = 0; this.torchturnedON = 0;
+        this.ScoreIncrement = 0;
 
         //training trial number
         this.trialNum = this.trialNum + 1
-        this.zone_collider = 0
+        this.zone_collider = 0; this.PrevCoordinate = 0
 
         if (this.trialNum>1){
             this.FirstTime = false
@@ -159,24 +163,24 @@ export default class TrainingLast extends Phaser.Scene {
         StartDelayTrain(this,this.predator,this.train,this.trialNum,this.Predator_ActualMean,this.Predator_PredefinedMean,this.Predator_PredefinedTypes)   //add delay before game fully starts
 
         this.predator.scene.add.existing(this.predator)
-        CurrentPredatorAngle = Phaser.Math.Angle.Between(this.sc_widt, this.sc_high,this.startx,this.starty)
+        // CurrentPredatorAngle = Phaser.Math.Angle.Between(this.sc_widt, this.sc_high,this.startx,this.starty)
         //this.predator.setRotation(CurrentPredatorAngle)
-        RotatePredatorToPlayer(this,CurrentPredatorAngle,this.predator,this.Player)
+        // RotatePredatorToPlayer(this,CurrentPredatorAngle,this.predator,this.Player)
         //RotatePredatorToPlayer(scene,)
 
-        this.time.addEvent({
-            delay: 50,
-            callback: () => {
-                [this.Prompt] = PromptToPlaceTorch(this)
-                //PredatorWarning(scene,predatorObject.ActualName)
-                //PredatorArrival(scene,predatorObject,train)
-            },
-            loop: false
-        });
+        // this.time.addEvent({
+        //     delay: 50,
+        //     callback: () => {
+        //         [this.Prompt] = PromptToPlaceTorch(this)
+        //         //PredatorWarning(scene,predatorObject.ActualName)
+        //         //PredatorArrival(scene,predatorObject,train)
+        //     },
+        //     loop: false
+        // });
 
         //make collider bounds same as object
         this.predator.body.updateFromGameObject()
-        this.predator.setBodySize(15,15,true)
+        this.predator.setBodySize(75,75,true)
 
 
 
@@ -205,12 +209,12 @@ export default class TrainingLast extends Phaser.Scene {
         this.zone.body.moves = false;
         this.zone.body.setCircle(200);
 
-        console.log(this.zone)
+        // console.log(this.zone)
 
         this.physics.add.overlap(this.predator, this.zone);
 
-        this.zone.on('enterzone', () => console.log('enterzone'));
-        this.zone.on('leavezone', () => console.log('leavezone'));
+        // this.zone.on('enterzone', () => console.log('enterzone'));
+        // this.zone.on('leavezone', () => console.log('leavezone'));
 
 
 
@@ -231,6 +235,32 @@ export default class TrainingLast extends Phaser.Scene {
         //End game if escape pressed
         this.escape = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
 
+        // if (this.trialNum == 6 || this.trialNum == 11){
+        //
+        //     // Tell people that the predator will change now
+        //     var promptText = this.make.text({x: this.sc_widt,
+        //         y: this.sc_high -225,
+        //         text: 'Lets Train With a Different Predator',  ///
+        //         origin: 0.5,
+        //         style: {
+        //             font: 'bold 15px Arial',
+        //             fill: 'white',
+        //             backgroundColor: 'rgb(119,19,19)',
+        //             align: 'center'
+        //         },
+        //     })
+        //
+        //
+        //     this.time.addEvent({
+        //             delay: 3500,
+        //             callback: () => {
+        //                 promptText.destroy()
+        //             },
+        //             loop: false
+        //         })
+        //
+        // }
+
         if (this.trialNum >= 15){
             this.trialNum = 0
             this.FirstTime = true
@@ -249,7 +279,12 @@ export default class TrainingLast extends Phaser.Scene {
         this.Player.on('pointerdown',function (){
             if (this.torch_initiation  === 0) {
                 this.torch_initiation=1;  //press mouse button to start moving torch
-                this.torchMovement = 1
+                this.torchMovement = 1;
+                this.torchturnedON = 1;
+                this.Torch.setVisible(true)
+                this.torch_smoke.setVisible(true)
+                this.torch_smoke.body.enable = true
+                this.torch_handle.setVisible(true)         //make the handle and torch visible
 
 
             }
@@ -277,35 +312,35 @@ export default class TrainingLast extends Phaser.Scene {
             }, this);
         }
 
-        if (this.torch_initiation === 3){
-            // Predator only arrives after participants have fixed their torches
-
-            this.Prompt.destroy()
-            PredatorWarning(this,this.predator.ActualName)
-            PredatorArrival(this,this.predator,this.train)
-
-            this.torch_initiation =4;   // Once predator arrives, change torch_initiation value
-
-
-        }
-
-        if (this.torch_initiation === 4){
-
-            // After fixing torch, click again to turn torch on
-            this.input.on('pointerdown', function () {
-                if (this.torch_initiation === 4) {
-
-
-                    this.torch_initiation = 5;
-                    this.Torch.setVisible(true);
-                    this.Torch.body.enable = true;
-                    this.torch_smoke.setVisible(true);
-                    this.torch_smoke.body.enable = true;
-
-                }
-            }, this)
-
-        }
+        // if (this.torch_initiation === 3){
+        //     // Predator only arrives after participants have fixed their torches
+        //
+        //     this.Prompt.destroy()
+        //     PredatorWarning(this,this.predator.ActualName)
+        //     PredatorArrival(this,this.predator,this.train)
+        //
+        //     this.torch_initiation =4;   // Once predator arrives, change torch_initiation value
+        //
+        //
+        // }
+        //
+        // if (this.torch_initiation === 4){
+        //
+        //     // After fixing torch, click again to turn torch on
+        //     this.input.on('pointerdown', function () {
+        //         if (this.torch_initiation === 4) {
+        //
+        //
+        //             this.torch_initiation = 5;
+        //             this.Torch.setVisible(true);
+        //             this.Torch.body.enable = true;
+        //             this.torch_smoke.setVisible(true);
+        //             this.torch_smoke.body.enable = true;
+        //
+        //         }
+        //     }, this)
+        //
+        // }
 
         this.scoretext.setText('\nScore: ' + this.score)
 
@@ -316,6 +351,12 @@ export default class TrainingLast extends Phaser.Scene {
 
 
         ///////////
+        let theta = Math.atan2(this.Player.x - this.sc_widt, this.Player.y - this.sc_high)
+        theta = mod(Math.PI - theta,2*Math.PI)
+        theta = Phaser.Math.RadToDeg(theta)
+        theta = mod((theta + 270),360)
+        this.PlayerAngle = theta
+
         var touching = this.zone.body.touching;
         var wasTouching = this.zone.body.wasTouching;
 
@@ -323,7 +364,7 @@ export default class TrainingLast extends Phaser.Scene {
             this.zone.emit('leavezone');
             this.zone_collider = 1
 
-            this.AngularDistance = (CircularDistance(this,this.torchangle,this.Predator_PredefinedMean[this.trialNum-1]))
+            this.AngularDistance = (CircularDistance(this,this.PlayerAngle,this.Predator_PredefinedMean[this.trialNum-1]))
 
             movePredatorinCircularPath(this,this.predator,this.theta,this.AngularDistance)
 

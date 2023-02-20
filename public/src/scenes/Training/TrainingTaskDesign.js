@@ -30,7 +30,7 @@ export default class TrainingGameDesign extends Phaser.Scene {
 
 
     //torch initialization variables
-    MinimumFlameSize=15/100
+    MinimumFlameSize=20/100
 
     //torch and fire
     torch_handle; torch_smoke
@@ -108,6 +108,8 @@ export default class TrainingGameDesign extends Phaser.Scene {
 
         //initialize data variables
         this.torchMovement = 0 //torch not moved initially
+        this.torch_initiation = 0
+
 
 
 
@@ -138,7 +140,7 @@ export default class TrainingGameDesign extends Phaser.Scene {
         //End game if escape pressed
         this.escape = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
 
-        if (this.trialNum >= 5){
+        if (this.trialNum > 5){
             this.trialNum = 0
             this.FirstTime = true
             this.torch_initiation = 0;
@@ -158,6 +160,11 @@ export default class TrainingGameDesign extends Phaser.Scene {
                 this.torch_initiation=1;  //press mouse button to start moving torch
 
                 this.torchMovement = 1
+                // this.torchturnedON = 1;
+                this.Torch.setVisible(true)
+                this.torch_smoke.setVisible(true)
+                this.torch_smoke.body.enable = true
+                this.torch_handle.setVisible(true)         //make the handle and torch visible
 
             }
         },this);
@@ -177,6 +184,9 @@ export default class TrainingGameDesign extends Phaser.Scene {
                     this.torchx = this.Torch.x;  //store final location of torch
                     this.torchy = this.Torch.y
 
+
+
+
                 }
 
             }, this);
@@ -186,10 +196,26 @@ export default class TrainingGameDesign extends Phaser.Scene {
         if (this.torch_initiation === 3){
             // Predator only arrives after participants have fixed their torches
 
+            MovingText(this,'Great!',this.torch_smoke)
+            // this.TorchonPrompt.destroy()
             this.Prompt.destroy()
 
-            Alarm(this)
+            this.lives--
 
+            this.time.addEvent({
+                delay: 900,
+                callback: () => {
+                    this.torch_initiation = 0
+                    this.scene.restart()
+
+                },
+                loop: false
+            })
+
+            // this.Prompt.destroy()
+            //
+            // Alarm(this)
+            //
 
             // PredatorWarning(this,this.predator.ActualName)
             // PredatorArrival(this,this.predator,this.train)
@@ -199,44 +225,44 @@ export default class TrainingGameDesign extends Phaser.Scene {
 
         }
 
-        if (this.torch_initiation === 4){
-
-            this.TorchonPrompt = PromptToTurnTorchOn(this)
-
-
-            // After fixing torch, click again to turn torch on
-            this.input.on('pointerdown', function () {
-                if (this.torch_initiation === 4) {
-
-                    this.torch_initiation = 5;
-
-                    this.Torch.setVisible(true);
-                    this.Torch.body.enable = true;
-                    this.torch_smoke.setVisible(true);
-                    this.torch_smoke.body.enable = true;
-                }
-            }, this)
-
-        }
-
-        if (this.torch_initiation === 5){
-
-            MovingText(this,'Great',this.torch_smoke)
-            this.TorchonPrompt.destroy()
-            this.torch_initiation = 0
-            this.lives--
-
-            this.time.addEvent({
-                delay: 900,
-                callback: () => {
-
-                    this.scene.restart()
-
-                },
-                loop: false
-            })
-
-        }
+        // if (this.torch_initiation === 4){
+        //
+        //     this.TorchonPrompt = PromptToTurnTorchOn(this)
+        //
+        //
+        //     // After fixing torch, click again to turn torch on
+        //     this.input.on('pointerdown', function () {
+        //         if (this.torch_initiation === 4) {
+        //
+        //             this.torch_initiation = 5;
+        //
+        //             this.Torch.setVisible(true);
+        //             this.Torch.body.enable = true;
+        //             this.torch_smoke.setVisible(true);
+        //             this.torch_smoke.body.enable = true;
+        //         }
+        //     }, this)
+        //
+        // }
+        //
+        // if (this.torch_initiation === 5){
+        //
+        //     MovingText(this,'Great',this.torch_smoke)
+        //     this.TorchonPrompt.destroy()
+        //
+        //     this.lives--
+        //
+        //     this.time.addEvent({
+        //         delay: 900,
+        //         callback: () => {
+        //             this.torch_initiation = 0
+        //             this.scene.restart()
+        //
+        //         },
+        //         loop: false
+        //     })
+        //
+        // }
 
         // this.scoretext.setText('\nScore: ' + this.score)
 
