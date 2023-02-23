@@ -288,7 +288,7 @@ export const WaitSceneCall = (scene,predatorObj, train) => {
     scene.time.addEvent({
         delay: predatorObj.AttackTime,  // Time taken by predator to attack
         callback: () => {
-            scene.scene.launch('Wait', {predatorNum:scene.PredType})
+            scene.scene.launch('Wait', {predatorNum:scene.PredType, sceneName:scene.sceneName})
             scene.scene.pause()
             PredatorArrival(scene,predatorObj,train)
             console.log('Wait scene called')
@@ -297,11 +297,11 @@ export const WaitSceneCall = (scene,predatorObj, train) => {
     })
 }
 
-export const ITISceneCall = (scene) => {
+export const ITISceneCall = (scene, sceneName) => {
 
 
-    scene.scene.launch('ITI')
-    scene.scene.stop('gameScene')
+    scene.scene.launch('ITI', {sceneName: sceneName, playerImageKey:scene.playerImage})
+    scene.scene.stop(sceneName)
 
     // scene.scene.launch('ITI')
     // scene.scene.pause()
@@ -323,7 +323,8 @@ export const StartDelayTrain = (scene,predatorObject,train,trialNum,ActualMean,P
             // PredatorArrival(scene,predatorObject,train)
             // PromptToPlaceTorch(scene)
             PredatorWarning(scene,predatorObject.ActualName)
-            PredatorArrival(scene,predatorObject,train)
+            WaitSceneCall(scene,predatorObject,train)
+            // PredatorArrival(scene,predatorObject,train)
 
             if (train === 1){
                 predatorObject.visible = true
@@ -364,7 +365,7 @@ export const PredatorArrival = (scene,predatora,train) => {
     console.log('Scene started running')
 
     scene.time.addEvent({ //,
-        delay: 20, //predatora.AttackTime,
+        delay: 40, //predatora.AttackTime,
         callback: () => {
 
 
@@ -563,8 +564,8 @@ export const TrainingPromptAboutTorchLocation = (scene) => {
 
 
 
-    let LowerBoundMean = mod(scene.MeanAngle-3,360)   //margin of locations around the mean where the participants can place torch (3 degrees)
-    let UpperBoundMean = mod(scene.MeanAngle+3,360)
+    let LowerBoundMean = mod(scene.MeanAngle-5,360)   //margin of locations around the mean where the participants can place torch (3 degrees)
+    let UpperBoundMean = mod(scene.MeanAngle+5,360)
     // console.log('Prompt Started', scene.Success, scene.torchangle, scene.MeanAngle, LowerBoundMean,UpperBoundMean)
 
 
@@ -892,7 +893,7 @@ export const PlayerPredatorCollision = (scene,train) => {
                 scene.addData()
                 scene.Player.destroy();
 
-                ITISceneCall(scene)
+                ITISceneCall(scene, scene.sceneName)
 
                 // scene.time.delayedCall(40, scene.scene.restart(), [], scene)
 
@@ -922,7 +923,7 @@ export const PlayerPredatorCollision = (scene,train) => {
 
             else {
                 // scene.time.delayedCall(40, scene.scene.restart(), [], scene)
-                ITISceneCall(scene)
+                ITISceneCall(scene,scene.sceneName)
             }
 
 
@@ -967,7 +968,7 @@ export const TorchPredatorCollision = (scene,train) => {
             }
 
             else {
-                ITISceneCall(scene)
+                ITISceneCall(scene,scene.sceneName)
                 // scene.scene.restart()
                 // scene.time.delayedCall(40, scene.scene.restart(), [], scene)
             }

@@ -4,8 +4,9 @@ import Phaser from '../lib/phaser.js'
 export default class ITIScene extends Phaser.Scene {
 
     init(data) {
-        this.PredatorNum = data.predatorNum
+
         this.playerImage = data.playerImageKey
+        this.sceneName = data.sceneName
 
     }
 
@@ -31,7 +32,7 @@ export default class ITIScene extends Phaser.Scene {
             delay: 3500,   // addJitter 4 to 6 secs (ITI)
             callback: () => {
                 this.scene.stop('ITI')
-                this.scene.start('gameScene',{ playerImageKey: this.playerImage})
+                this.scene.start(this.sceneName,{ playerImageKey: this.playerImage})
                 // this.scene.resume('gameScene')
 
 

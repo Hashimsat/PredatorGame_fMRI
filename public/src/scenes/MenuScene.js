@@ -15,9 +15,6 @@ export default class MenuScene extends Phaser.Scene {
         const width = this.scale.width
         const height = this.scale.height
 
-        console.log(this.playerImage)
-
-
 
         this.add.text(width * 0.5, height * 0.2, 'MENU', {
             fontSize: 40,
@@ -33,7 +30,7 @@ export default class MenuScene extends Phaser.Scene {
             .setOrigin(0.5);
 
         const StartInstruction= this.add.text(width * 0.5, height * 0.7, 'Go To Instructions and Tutorial', { fontSize:25,fill: '#F38BE3' });
-        StartInstruction.setInteractive().on('pointerdown', () => this.scene.start('TrainingPredatorMean',{ playerImageKey: this.playerImage}))
+        StartInstruction.setInteractive().on('pointerdown', () => this.scene.start('WelcomeInstruct',{ playerImageKey: this.playerImage}))
             .on('pointerover', () => this.ButtonHoverState(StartInstruction) )
             .on('pointerout', () => this.ButtonRestState(StartInstruction))
             .setOrigin(0.5);

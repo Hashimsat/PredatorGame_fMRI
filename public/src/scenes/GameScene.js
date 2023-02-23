@@ -108,6 +108,8 @@ export default class GameScene extends Phaser.Scene {
     AngularDistance
     target = new Phaser.Math.Vector2();
 
+    sceneName = 'gameScene'
+
 
 
     /** @type {Phaser.Physics.Arcade.Sprite} */
@@ -121,6 +123,8 @@ export default class GameScene extends Phaser.Scene {
 
     init(data) {
         this.playerImage = data.playerImageKey   //Gets the name of avatar chosen by participants in ChooseAvatar scene
+        this.scale.setGameSize(640,640)
+        this.scale.updateBounds();
         // this.scale.setGameSize(window.innerWidth,window.innerHeight)
         // this.scale.updateBounds();
     }
@@ -141,8 +145,11 @@ export default class GameScene extends Phaser.Scene {
 
 
 
+
+
         //initialize data variables
         // Calculate number of trials & Initialize variables
+
         this.trialNum = this.trialNum + 1
         this.CP = 0 //first trial not a changepoint
         this.startx = null ; this.starty = null;

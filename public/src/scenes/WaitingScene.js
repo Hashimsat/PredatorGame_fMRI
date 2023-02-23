@@ -9,6 +9,8 @@ export default class WaitingScene extends Phaser.Scene {
     init(data) {
         this.PredatorNum = data.predatorNum
         this.playerImage = data.playerImageKey
+        this.sceneName = data.sceneName
+
     }
 
     constructor()
@@ -30,7 +32,7 @@ export default class WaitingScene extends Phaser.Scene {
         const sc_high = this.scale.height / 2
         this.add.image(sc_widt,sc_high,'Black').setScale(1.1)
 
-        this.add.image(sc_widt,sc_high,'Predator').setScale(0.4)
+        this.add.image(sc_widt,sc_high,'Predator').setScale(0.35)
 
 
 
@@ -38,7 +40,7 @@ export default class WaitingScene extends Phaser.Scene {
             delay: 2500,   // addJitter 1.5 to 2.5 secs,
             callback: () => {
                 this.scene.stop('Wait')
-                this.scene.resume('gameScene')
+                this.scene.resume(this.sceneName)
 
 
             },

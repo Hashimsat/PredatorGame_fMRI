@@ -95,6 +95,8 @@ export default class TrainingPredatorVariance extends Phaser.Scene {
     AngularDistance; PlayerAngle
     target = new Phaser.Math.Vector2();
 
+    sceneName = 'TrainingPredatorVar'
+
 
     /** @type {Phaser.Physics.Arcade.Sprite} */
     Torch
@@ -146,6 +148,7 @@ export default class TrainingPredatorVariance extends Phaser.Scene {
         //Changepoint occurs after 5 trials
 
         [this.startx,this.starty] = StartLocationCommon(this,this.Predator_PredefinedMean[this.trialNum-1],this.sc_widt)
+        this.Prev_predator_x = this.startx; this.Prev_predator_y = this.starty;
         this.theta = Phaser.Math.DegToRad(this.Predator_PredefinedMean[this.trialNum-1])
 
 
