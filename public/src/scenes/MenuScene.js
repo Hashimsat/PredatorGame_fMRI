@@ -15,6 +15,8 @@ export default class MenuScene extends Phaser.Scene {
         const width = this.scale.width
         const height = this.scale.height
 
+        console.log(this.playerImage)
+
 
 
         this.add.text(width * 0.5, height * 0.2, 'MENU', {

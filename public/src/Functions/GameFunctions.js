@@ -851,9 +851,6 @@ export const PlayerPredatorCollision = (scene,train) => {
     scene.predator.body.moves = false
     scene.physics.disableUpdate()
 
-    if (this.AfterChangeCount === 0) {
-        this.lives--;    //3 trials after changepoint are safe trials, after which players start losing lives
-    }
 
     // Decrease the score if participants fail a trial
     // let text1 = "-" + scene.ScoreIncrement
@@ -873,7 +870,7 @@ export const PlayerPredatorCollision = (scene,train) => {
     if (train == 0) {
 
         if (scene.trialNum > 3) {
-            scene.lives--;    //3 trials after changepoint are safe trials, after which players start losing lives
+            scene.lives--;    //First 3 trials are safe trials, after which players start losing lives
         }
 
         //this.torch_initiation = 0;   //stop torch from moving once Player is eaten
