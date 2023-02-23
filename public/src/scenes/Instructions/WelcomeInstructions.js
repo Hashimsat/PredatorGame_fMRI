@@ -34,7 +34,7 @@ export default class WelcomeInstructions extends Phaser.Scene {
 
         const BackButton= this.add.text(75, 580, 'Back', { fill: '#0f0' });
         BackButton.setScale(1.5)
-        BackButton.setInteractive().on('pointerdown', () => this.scene.start('ChooseAvatar',{ playerImageKey: this.playerImage}))
+        BackButton.setInteractive().on('pointerdown', () => this.scene.start('ChooseAvatar',{ reload:1}))
             .on('pointerover', () => this.ButtonHoverState(BackButton) )
             .on('pointerout', () => this.ButtonRestState(BackButton) );
 

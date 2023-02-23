@@ -9,27 +9,11 @@ import {
     StartDelayTest,
     PlayerPredatorCollision,
     TorchPredatorCollision,
-    TorchPredatorMarkers,
-    PredatorArrival,
-    PredatorWarning,
     mod,
-    PromptToPlaceTorch,
-    PredatorAttackingPlayer,
     movePredatorinCircularPath,
     CircularDistance
 } from "../Functions/GameFunctions.js";
 import {InitializeGameObjects,preloadInit} from "../Functions/GameUtils.js";
-
-
-
-
-
-
-import Cheetah from '../game/Cheetah.js'
-import Panther from '../game/Panther.js'
-import Snow from '../game/Snow.js'
-
-
 
 
 
@@ -72,8 +56,9 @@ export default class GameScene extends Phaser.Scene {
 
 
     //start point of predator
-    startx
-    starty
+    startx = null
+    starty = null
+    ch
     MeanAngle
     radPredCircle
 
@@ -86,7 +71,8 @@ export default class GameScene extends Phaser.Scene {
 
     Prev_torch_x = null
     Prev_torch_y = null
-    Prev_torch_angle = - Math.PI/2
+    // Prev_torch_angle = - Math.PI/2
+    Prev_torch_angle
     Prev_predator_x
     Prev_predator_y
     Prev_predator_angle
@@ -159,11 +145,15 @@ export default class GameScene extends Phaser.Scene {
         // Calculate number of trials & Initialize variables
         this.trialNum = this.trialNum + 1
         this.CP = 0 //first trial not a changepoint
+        this.startx = null ; this.starty = null;
         this.torchMovement = 0 //torch not moved initially
         this.torchturnedON = 0; this.torch_initiation = 0;
         this.torchx = null;this.torchy=null;this.torchangle = null;
         this.RTInit = null ; this.RTConf = null ; this.RTTorchOn = null;
         this.zone_collider = 0; this.PrevCoordinate = 0; this.ScoreIncrement = 0;
+
+        console.log(this.playerImage)
+        console.log(this.Prev_Player_Finalx)
 
 
         //set game time as time at start of game
@@ -174,12 +164,10 @@ export default class GameScene extends Phaser.Scene {
         this.arr_MouseX = []; this.arr_MouseY = [];   // arrays to store mouse tracking data for one trial (data for each trial will then be stored with all other trials in a meta-tracking object)
 
         this.TrackMouse()
-        InitializeGameObjects(this)  //game objects common across scenes loaded and initialized through this common function found in GameUtils
+        InitializeGameObjects(this);  //game objects common across scenes loaded and initialized through this common function found in GameUtils
 
         //Initialize AfterChangePoint Variable, gets reset to zero after 3 trials
         // This count is kept so that there is a gap of atleast 3 trials between changepoints
-
-
 
         if (this.AfterChangeCount === 3)
         {
@@ -187,10 +175,9 @@ export default class GameScene extends Phaser.Scene {
 
         }
 
-        //set initial position of predator (location from where it will appear from)
+        //set attack position of predator (location where it will attack towards)
 
-        this.PredatorStartLocationUpdated()   //function found in this scene
-
+        this.PredatorAttackLocationUpdated() ;  //function found in this scene
 
         //Select a predator randomly from the 3 options available
 
@@ -199,32 +186,8 @@ export default class GameScene extends Phaser.Scene {
 
         //ChoosePredator function chooses predator depending upon the value in this.PredType
         this.predator = ChoosePredator(this,this.PredType,this.sc_widt, this.sc_high)
-        //StartDelayTest(this,this.predator,this.train)   //add a delay after which warning occurs, and then predator appears after another delay that depends upon type of predator chosen
-
-
-        ///////
-
-
-        //
-        // const PredatorArray = [1, 2, 3]   //each number represents a specific predator; 1=Cheetah, 2=Panther; 3=Snow
-        // this.PredType = Phaser.Utils.Array.GetRandom(PredatorArray)   //choose one number randomly from PredatorArray
-
-
 
         StartDelayTest(this,this.predator,this.train)   //add a delay after which warning occurs, and then predator appears after another delay that depends upon type of predator chosen
-
-        // console.log(this.Player.angle)
-
-
-        // this.time.addEvent({
-        //     delay: 50,
-        //     callback: () => {
-        //         [this.Prompt] = PromptToPlaceTorch(this)
-        //         //PredatorWarning(scene,predatorObject.ActualName)
-        //         //PredatorArrival(scene,predatorObject,train)
-        //     },
-        //     loop: false
-        // });
 
         //make collider bounds same as object
 
@@ -233,14 +196,10 @@ export default class GameScene extends Phaser.Scene {
         this.predator.body.updateFromGameObject()
         this.predator.body.enable = false
 
-        // this.predator.body.center
-        // this.torch_smoke.body.updateFromGameObject()
-
-        //this.Torch.setBodySize(200,200,true)
-
-        //put a circular body around torch, centered correctly
 
         // Degrees to pixel conversion debug
+        // creates lines at 5 degrees, allows torch debugging
+
         // var g1 = this.add.grid(320, 320, 250, 250, 5, 5, 0xff0000).setAltFillStyle(0x016fce).setOutlineStyle().setAlpha(0.5);
 
         // for( let i = 0; i<=360; ){
@@ -269,13 +228,12 @@ export default class GameScene extends Phaser.Scene {
         })
 
         ///////////////////////
+        // create a circular zone (around the inner white circle), which would be used to figure out if predator has escaped the white circle
         this.zone = this.add.zone(120, 120).setOrigin(0.5,0.5)
         this.physics.world.enable(this.zone, 0); // (0) DYNAMIC (1) STATIC
         this.zone.body.setAllowGravity(false);
         this.zone.body.moves = false;
         this.zone.body.setCircle(200);
-
-        // console.log(this.zone)
 
         this.physics.add.overlap(this.predator, this.zone);
 
@@ -308,7 +266,6 @@ export default class GameScene extends Phaser.Scene {
         //this default function runs every millisecond
         //
 
-        //
         this.radPredCircle = Math.min(window.innerWidth,window.innerHeight)
         console.log(this.torch_initiation)
 
@@ -334,6 +291,7 @@ export default class GameScene extends Phaser.Scene {
         },this);
 
         if (this.torch_initiation === 1){
+            //start moving torch around circle if true
             [this.Prev_torch_x, this.Prev_torch_y, this.Prev_torch_angle, this.torchangle] = moveTorchOnCircle(this, this.Torch, this.torch_handle,this.torch_smoke, this.Player, this.torchMovement, this.input.x, this.input.y)
 
 
@@ -354,50 +312,11 @@ export default class GameScene extends Phaser.Scene {
             }, this);
         }
 
-        //stop moving torch when position fixed by mouse click
-
-
-
-        // if (this.torch_initiation === 3){
-        //     // Predator only arrives after participants have fixed their torches
-        //     this.torch_initiation =4;   // Once predator arrives, change torch_initiation value
-        //     this.Prompt.destroy()
-        //
-        //     // console.log(this.torch_initiation)
-        //     PredatorWarning(this,this.predator.ActualName)
-        //     PredatorArrival(this,this.predator,this.train)
-        // }
-        //
-        // if (this.torch_initiation === 4){
-        //
-        //
-        //     // After fixing torch, click again to turn torch on
-        //     this.input.on('pointerdown', function () {
-        //         if (this.torch_initiation === 4) {
-        //
-        //             var timeConfirm = new Date().getTime()   //calculates number of milliseconds since 1970 to current time
-        //
-        //             this.RTTorchOn = Math.abs(timeConfirm - this.game.ms)   //time at which participants turns torch on
-        //             this.torchturnedON = 1;
-        //
-        //             this.torch_initiation = 5;
-        //
-        //             this.Torch.setVisible(true);
-        //             this.Torch.body.enable = true;
-        //             this.torch_smoke.setVisible(true);
-        //             this.torch_smoke.body.enable = true;
-        //
-        //         }
-        //     }, this)
-        //
-        // }
-
 
         //show score and number of lives left
 
         this.scoretext.setText('Lives Left: ' + this.lives +
-            '\nScore: ' + this.score +
-            '\nPoints Collected: ' + this.ScoreIncrement)
+            '\nScore: ' + this.score)
 
         //monitor if esc is pressed and discontinue if it is
         if (this.escape.isDown){
@@ -407,6 +326,8 @@ export default class GameScene extends Phaser.Scene {
             // this.ReInitializeVariablesAtEnd();
         }
 
+        // calculate theta or PlayerAngle wrt center, which would be used by predator to run towards the Player avatar
+
         let theta = Math.atan2(this.Player.x - this.sc_widt, this.Player.y - this.sc_high)
         theta = mod(Math.PI - theta,2*Math.PI)
         theta = Phaser.Math.RadToDeg(theta)
@@ -415,25 +336,23 @@ export default class GameScene extends Phaser.Scene {
 
 
         ///////////
+        // check if predator is still in the circular zone or has left it
         var touching = this.zone.body.touching;
         var wasTouching = this.zone.body.wasTouching;
 
         if (touching.none && !wasTouching.none  && this.zone_collider == 0) {
+            // if predator has escaped the zone, make it run towards the player
             this.zone.emit('leavezone');
             this.zone_collider = 1
 
             // we first find the Player angle, so predator runs towards it on the shortest circular path
-
-
+            // then we find shortest distance between player angle and predator
             this.AngularDistance = (CircularDistance(this,this.PlayerAngle,this.PredAngle))  //Predator runs towards player
 
             // this.AngularDistance = (CircularDistance(this,this.torchangle,this.PredAngle))  //Predator runs towards torch
 
-
             movePredatorinCircularPath(this,this.predator,this.theta,this.AngularDistance)
 
-            // PredatorAttackingPlayer(this,this.predator,this.PredAngle,this.torchangle)
-            // this.physics.moveTo(this.predator,this.Player.x,this.Player.y,this.predator.speedo)
             this.physics.world.disable(this.zone)
 
         }
@@ -442,9 +361,6 @@ export default class GameScene extends Phaser.Scene {
 
         }
 
-        // if (this.zone_collider == 1){
-        //     this.theta = movePredatorinCircularPath(this,this.predator,this.theta,this.AngularDistance)
-        // }
 
         this.zone.body.debugBodyColor = this.zone.body.touching.none ? 0x00ffff : 0xffff00;
 
@@ -455,10 +371,6 @@ export default class GameScene extends Phaser.Scene {
         {
             this.predator.body.reset(this.target.x, this.target.y);  // Stop predator once it reaches target (the new position as it moves in circle)
         }
-
-
-
-
 
 
     }  //update ends here
@@ -541,6 +453,8 @@ export default class GameScene extends Phaser.Scene {
         this.torchturnedON = 0
         this.Prev_torch_x = null
         this.Prev_torch_y = null
+        this.startx = null
+        this.starty = null
         this.scene.start('game-over', {score: this.score,MaxLives: this.Max_lives ,trialNumbers: this.trialNum, Discontinued: this.Discontinue, mousetrackX: this.Mouse_x,mousetrackY: this.Mouse_y})
         this.score = 0
         this.trialNum = 0
@@ -550,9 +464,9 @@ export default class GameScene extends Phaser.Scene {
 
 
 
-    PredatorStartLocationUpdated() {
+    PredatorAttackLocationUpdated() {
 
-        // Function that determines initial start location of predator
+        // Function that determines attack location of predator
         // Takes into account both expected uncertainty and unexpected uncertainty
 
         var kappa = 15  //precision of vonmises distribution
@@ -568,7 +482,6 @@ export default class GameScene extends Phaser.Scene {
         // var rad = Math.min(this.sc_widt,this.sc_high);
         // // var rad =this.radPredCircle/2
         var rad = 320
-
 
 
         var NormallyDistributedAngle
@@ -613,14 +526,18 @@ export default class GameScene extends Phaser.Scene {
         {
             NormallyDistributedAngle = this.normalRandomScaled(this.MeanAngle,std)   //sample from a normal dist with given mean
             //console.log('Std is',std)
-            NormallyDistributedAngle = mod(NormallyDistributedAngle,(360))   //wrap the angle around a circle, effectively making it wrapped normal
-            //console.log('Choice 1, Mean angle is',this.MeanAngle)
-            StartLocationCommon(this,NormallyDistributedAngle,rad)
+            NormallyDistributedAngle = mod(NormallyDistributedAngle,(360));   //wrap the angle around a circle, effectively making it wrapped normal
+                //console.log('Choice 1, Mean angle is',this.MeanAngle)
+            // [this.startx, this.starty] = StartLocationCommon(this,NormallyDistributedAngle,rad)
+
 
             if (this.AfterChangeCount > 0)
             {
                 this.AfterChangeCount++;
             }
+
+            [this.startx,this.starty] = StartLocationCommon(this,NormallyDistributedAngle,rad)
+
 
         }
 
@@ -636,10 +553,11 @@ export default class GameScene extends Phaser.Scene {
 
 
             NormallyDistributedAngle = this.normalRandomScaled(this.MeanAngle, std)
-            NormallyDistributedAngle = mod(NormallyDistributedAngle,(360))
-
+            NormallyDistributedAngle = mod(NormallyDistributedAngle,(360));
+            ///
             //console.log('Choice 2, NDA is',NormallyDistributedAngle)
-            StartLocationCommon(this,NormallyDistributedAngle,rad)
+
+            [this.startx, this.starty] = StartLocationCommon(this,NormallyDistributedAngle,rad)
             this.AfterChangeCount = 1
             this.FirstTime = false
 
@@ -650,7 +568,7 @@ export default class GameScene extends Phaser.Scene {
         this.theta = Phaser.Math.DegToRad(this.PredAngle)
 
         //store location of predator arrival on previous trial
-        this.Prev_predator_x =this.startx;
+        this.Prev_predator_x = this.startx;
         this.Prev_predator_y = this.starty;
 
 
@@ -708,32 +626,6 @@ export default class GameScene extends Phaser.Scene {
         return Math.round(r);
 
     }
-
-
-    // CircularDistance(angle1,angle2){
-    //
-    //     //calculates distance between 2 angles, alongwith the sign showing if angle1 is > or < angle2
-    //     //formula: shortest distance = PI - abs(PI - abs(angle1 - angle2))
-    //
-    //     var term1 = Phaser.Math.DegToRad(angle1) - Phaser.Math.DegToRad(angle2)
-    //     var sign_term1 = Math.sign(term1)
-    //     var term2 = Math.PI - Math.abs(term1)
-    //     var sign_term2 = Math.sign(term2)
-    //     var sign_overall = sign_term1*sign_term2
-    //
-    //     if (sign_overall != 0) {
-    //         var shortest_distance = sign_overall * Phaser.Math.RadToDeg(Math.PI - Math.abs(term2))
-    //     }
-    //
-    //     else if (sign_overall === 0){
-    //         var shortest_distance = Phaser.Math.RadToDeg(Math.PI - Math.abs(term2))
-    //     }
-    //
-    //     return shortest_distance
-    //
-    //
-    //
-    // }
 
     TrackMouse(){
 

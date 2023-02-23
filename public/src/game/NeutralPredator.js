@@ -21,7 +21,7 @@ export default class NeutralPredator extends Phaser.Physics.Arcade.Sprite
         this.PointsPossible = '(35)'
 
 
-        this.visible = false
+        this.visible = true
 
         this.active =true
         this.name = 'NeutralRunner'

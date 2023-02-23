@@ -145,11 +145,11 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
 
 
 
-        InitializeGameObjects(this)
+        InitializeGameObjects(this);
         //Predator only appears from varied locations, centered around a mean
         //Changepoint occurs after 5 trials
 
-        StartLocationCommon(this,this.Predator_PredefinedMean[this.trialNum-1],this.sc_widt)
+        [this.startx,this.starty] = StartLocationCommon(this,this.Predator_PredefinedMean[this.trialNum-1],this.sc_widt)
         this.theta = Phaser.Math.DegToRad(this.Predator_PredefinedMean[this.trialNum-1])
 
 

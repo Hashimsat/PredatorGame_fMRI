@@ -146,12 +146,12 @@ export default class TrainingPredatorMean extends Phaser.Scene {
         }
 
         
-        InitializeGameObjects(this)
+        InitializeGameObjects(this);
 
 
         //Predator only appears from a single fixed direction (mean of normal distribution)
         //Changepoint occurs after 5 trials
-        StartLocationCommon(this,this.Predator_PredefinedMean[this.trialNum-1],this.sc_widt)
+        [this.startx,this.starty] = StartLocationCommon(this,this.Predator_PredefinedMean[this.trialNum-1],this.sc_widt)
         this.theta = Phaser.Math.DegToRad(this.Predator_PredefinedMean[this.trialNum-1])
 
         // this.predator = this.physics.add.existing((new Panther(this, this.sc_widt, this.sc_high, 'PantherRun')))

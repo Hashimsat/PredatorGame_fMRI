@@ -22,6 +22,8 @@ import AfterVideoInstruction from "./scenes/Instructions/AfterVideoInstruction.j
 import WelcomeInstructions from "./scenes/Instructions/WelcomeInstructions.js";
 import InitialVideo from "./scenes/Training/InitialVideo.js";
 import CreateVideoForTraining from "./scenes/Training/CreateVideoForTraining.js";
+import WaitingScene from "./scenes/WaitingScene.js";
+import ITIScene from "./scenes/ITIScene.js";
 
 
 
@@ -75,12 +77,12 @@ let config = {
     //         TrainingPredatorMean
     scene:[ChooseAvatar,MenuScene,WelcomeInstructions,CreateVideoForTraining, StartingInstructions,FirstPracticeInstructions,SecondPracticeInstructions,AfterVideoInstruction,ThirdPracticeInstructions,FinalPracticeInstructions,TrainingGameDesign,
             TrainingPredatorMean ,TrainingPredatorVariance,InitialVideo,VideoTraining,TrainingDifferentPredators,TrainingLast,PromptToStartGame,
-            GameScene,GameOver,PrematureEnding, FailedSoundCheckEnding],
+            GameScene,WaitingScene,ITIScene,GameOver,PrematureEnding, FailedSoundCheckEnding],
     physics: {
         default: 'arcade',
         arcade: {
             gravity: {y: 0},
-            debug: false
+            debug: true
         }
     }
 };
