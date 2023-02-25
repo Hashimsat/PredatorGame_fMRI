@@ -13,6 +13,7 @@ Have also tried to standardize the time taken for outcome presentation. All outc
 - Change predator timings.
 - Gamma distribution to sample jitters and ITI.
 - Timestamps for all important events.
+- Something else that I might've forgotten :D.
 
 
 
