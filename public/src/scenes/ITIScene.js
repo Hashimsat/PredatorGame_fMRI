@@ -29,7 +29,7 @@ export default class ITIScene extends Phaser.Scene {
 
 
         this.time.addEvent({ //,
-            delay: 3500,   // addJitter 4 to 6 secs (ITI)
+            delay: 1500,   // addJitter 4 to 6 secs (ITI)
             callback: () => {
                 this.scene.stop('ITI')
                 this.scene.start(this.sceneName,{ playerImageKey: this.playerImage})

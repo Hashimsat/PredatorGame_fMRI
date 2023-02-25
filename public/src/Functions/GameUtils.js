@@ -22,9 +22,9 @@ export const InitializeGameObjects = (scene) => {
     scene.Player.setBodySize(550,850,true)
     scene.Player.setOrigin(0.5, 0.5)
 
-    console.log(scene.Player)
-    console.log(scene.Prev_Player_Finalx)
-    console.log(scene.Prev_torch_x)
+    // console.log(scene.Player)
+    // console.log(scene.Prev_Player_Finalx)
+    // console.log(scene.Prev_torch_x)
 
 
 

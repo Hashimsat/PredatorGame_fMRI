@@ -159,8 +159,8 @@ export default class GameScene extends Phaser.Scene {
         this.RTInit = null ; this.RTConf = null ; this.RTTorchOn = null;
         this.zone_collider = 0; this.PrevCoordinate = 0; this.ScoreIncrement = 0;
 
-        console.log(this.playerImage)
-        console.log(this.Prev_Player_Finalx)
+        // console.log(this.playerImage)
+        // console.log(this.Prev_Player_Finalx)
 
 
         //set game time as time at start of game

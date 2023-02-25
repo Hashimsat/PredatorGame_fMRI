@@ -225,7 +225,7 @@ export const RunAnimation =(scene) => {
         key: "explode",
         frames: scene.anims.generateFrameNumbers('explosion', {frames: [0, 1, 2, 3]}),
         frameRate: 10,
-        repeat: 1
+        repeat: -1
     });
 
     // create sad emoji when animal hits Player
@@ -255,7 +255,7 @@ export const StartLocationCommon = (scene,AngleDeg,rad) =>{
     AttackX = scene.sc_widt + newSX
     AttackY = scene.sc_high + newSY
 
-    console.log (AttackX,AttackY)
+    // console.log (AttackX,AttackY)
 
 
     return [AttackX,AttackY]
@@ -288,10 +288,11 @@ export const WaitSceneCall = (scene,predatorObj, train) => {
     scene.time.addEvent({
         delay: predatorObj.AttackTime,  // Time taken by predator to attack
         callback: () => {
+            console.log('Time at wait:', new Date().getTime())
             scene.scene.launch('Wait', {predatorNum:scene.PredType, sceneName:scene.sceneName})
             scene.scene.pause()
             PredatorArrival(scene,predatorObj,train)
-            console.log('Wait scene called')
+            // console.log('Wait scene called')
 
         }
     })
@@ -362,7 +363,7 @@ export const StartDelayTrain = (scene,predatorObject,train,trialNum,ActualMean,P
 export const PredatorArrival = (scene,predatora,train) => {
 
     //function that makes the predator arrive on the screen after a small delay
-    console.log('Scene started running')
+    // console.log('Scene started running')
 
     scene.time.addEvent({ //,
         delay: 40, //predatora.AttackTime,
@@ -882,23 +883,31 @@ export const PlayerPredatorCollision = (scene,train) => {
         scene.torch_smoke.setVisible(false)
 
 
-       // console.log('Lives remaining are', scene.lives)
+
+
 
         if (scene.lives !== 0) {
-            scene.Player.play('explode').once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-               // console.log('animation complete')
+                // trying to make the time same for each outcome
+            let PredictAngle = Math.abs(CircularDistance(scene,scene.PredAngle,scene.PlayerAngle))
+            // console.log('Predict angle: ', PredictAngle)
+            // console.log('delay is: ', (180-PredictAngle)*11.5)
 
-                // scene.torch_initiation = 0
+            scene.Player.play('explode')
 
-                scene.addData()
-                scene.Player.destroy();
+            scene.time.addEvent({
+                //From calculations for a predator to run 1° in circular path, it takes ~11.5ms. So 2100 ms for 180°.
+                // We scale appropriately so delay is same for each miss
+                    delay: (185-PredictAngle)*11.5,  //Larger prediction errors have smaller delays and vice versa
+                    callback: () => {
+                        // console.log('Time at Restart:', new Date().getTime())
+                        scene.addData()
+                        scene.Player.destroy();
 
-                ITISceneCall(scene, scene.sceneName)
+                        ITISceneCall(scene, scene.sceneName)
+                    },
+                    loop:false
+                    })
 
-                // scene.time.delayedCall(40, scene.scene.restart(), [], scene)
-
-
-            })
         } else if (scene.lives === 0) {   //end game if no lives remaining
             scene.Discontinue = 0
             scene.ReInitializeVariablesAtEnd()
@@ -911,11 +920,18 @@ export const PlayerPredatorCollision = (scene,train) => {
         scene.torch_smoke.setVisible(false)
         scene.torch_handle.setVisible(false)
 
-        scene.Player.play('explode').once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-           // console.log('animation complete')
-           //  scene.torch_initiation = 0
-            scene.lives--
-            scene.Player.destroy();
+        scene.lives--
+        // scene.Player.destroy();
+        scene.Player.play('explode')
+
+        let PredictAngle = Math.abs(CircularDistance(scene,scene.PredAngle,scene.PlayerAngle))
+
+        scene.time.addEvent({
+            //From calculations for a predator to run 1° in circular path, it takes ~11.5ms. So 2100 ms for 180°.
+            // We scale appropriately so delay is same for each miss
+            delay: (185-PredictAngle)*11.5,  //Larger prediction errors have smaller delays and vice versa (185 so that even for very large PEs participants get to see some explosion)
+            callback: () => {
+                console.log('Time at Restart:', new Date().getTime())
 
             if (train === 2) {
                 TrainingPromptAboutTorchLocation(scene)
@@ -926,10 +942,8 @@ export const PlayerPredatorCollision = (scene,train) => {
                 ITISceneCall(scene,scene.sceneName)
             }
 
-
-            //this.scene.restart()
-
-
+            },
+            loop:false
         })
     }
 }
@@ -968,7 +982,15 @@ export const TorchPredatorCollision = (scene,train) => {
             }
 
             else {
-                ITISceneCall(scene,scene.sceneName)
+                // make time delay after outcome same for a hit and miss (i.e 2100ms)
+                scene.time.addEvent({
+                    delay: 2150 - 550,
+                    callback: () => {
+                        ITISceneCall(scene,scene.sceneName)
+                    },
+                    loop: false,
+                })
+
                 // scene.scene.restart()
                 // scene.time.delayedCall(40, scene.scene.restart(), [], scene)
             }
@@ -1287,13 +1309,14 @@ export const movePredatorinCircularPath = (scene,predatorObject,theta,AngDistanc
 
 
     scene.time.addEvent({
-        delay: 100,
+        delay: 100,  //100
         callback: () => {
             // scene.Player.body.enable = false
 
             let sign = Math.sign(AngDistance)
 
             scene.torch_smoke.body.enable = false
+
 
 
 

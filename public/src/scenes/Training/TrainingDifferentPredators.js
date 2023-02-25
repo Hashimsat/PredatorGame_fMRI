@@ -86,6 +86,7 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
 
     //Additional Predator Variables
     PredType
+    PredAngle
     PrevCoordinate = 0
 
     //variables for zone, so cheetah circles around if torch is not in correct position
@@ -153,6 +154,8 @@ export default class TrainingDifferentPredators extends Phaser.Scene {
 
         [this.startx,this.starty] = StartLocationCommon(this,this.Predator_PredefinedMean[this.trialNum-1],this.sc_widt)
         this.Prev_predator_x = this.startx; this.Prev_predator_y = this.starty;
+
+        this.PredAngle = this.Predator_PredefinedMean[this.trialNum-1];
         this.theta = Phaser.Math.DegToRad(this.Predator_PredefinedMean[this.trialNum-1])
 
 
